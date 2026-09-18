@@ -1,0 +1,10 @@
+{
+  "best_params": {
+    "learning_rate": 0.05,
+    "max_depth": 4,
+    "n_estimators": 150,
+    "scale_pos_weight": 1.0,
+    "subsample": 0.8
+  },
+  "optimal_threshold": 0.212527
+}

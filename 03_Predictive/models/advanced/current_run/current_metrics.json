@@ -1,0 +1,19 @@
+{
+  "run_id": 10,
+  "seed": 112,
+  "cv_f1": 0.975825,
+  "threshold_youden": 0.151359,
+  "test_recall_retain": 0.885375,
+  "test_recall_churn": 0.843121,
+  "test_precision_retain": 0.055833,
+  "test_f1_retain": 0.105041,
+  "test_roc_auc": 0.933748,
+  "test_pr_auc": 0.322919,
+  "pred_retain_pct": 16.4433,
+  "best_max_depth": 4,
+  "best_learning_rate": 0.05,
+  "best_n_estimators": 150,
+  "best_scale_pos_weight": 1.0,
+  "timestamp": "2026-09-18T00:34:52.767989",
+  "optimal_threshold": 0.151359
+}
