@@ -1,9 +1,6 @@
 {
-  "best_params": {
-    "C": 0.001,
-    "class_weight": "balanced",
-    "penalty": "l1",
-    "solver": "liblinear"
-  },
-  "optimal_threshold": 0.650137
+  "C": 1.0,
+  "class_weight": "balanced",
+  "penalty": "l2",
+  "solver": "lbfgs"
 }

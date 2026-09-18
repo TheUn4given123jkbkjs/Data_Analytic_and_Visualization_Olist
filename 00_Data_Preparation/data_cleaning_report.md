@@ -18,26 +18,26 @@ Theo quy chuẩn kỹ thuật dữ liệu học thuật và thực tiễn doanh 
 Nhằm giải đáp chi tiết thắc mắc của Giảng viên về sự thay đổi của các con số qua từng bước:
 
 ```
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│ 1. DỮ LIỆU GỐC BAN ĐẦU: 99,441 dòng 'customer_id'                                     │
-│    └─ Bản chất: Mã phiên đặt hàng (Order Session Key). Mỗi đơn hàng sinh ra 1 ID mới.  │
-└───────────────────────────────────────────┬────────────────────────────────────────────┘
-                                            │ (Gom nhóm theo mã căn cước khách hàng thực tế)
-                                            ▼
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│ 2. KHÁCH HÀNG THỰC TẾ DUY NHẤT: 96,096 cá nhân 'customer_unique_id'                    │
-│    └─ Chênh lệch 3,345 phiên phát sinh từ khách hàng mua lặp lại (Repeat Customers).  │
-└───────────────────────────────────────────┬────────────────────────────────────────────┘
-                                            │ (Lọc đơn hàng hoàn tất chu trình 'delivered' = 95,137 đơn)
-                                            ▼
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│ 3. QUẦN THỂ NGHIÊN CỨU HÀNH VI CHUẨN XÁC: N = 92,077 KHÁCH HÀNG DUY NHẤT               │
-│    ├─ 89,333 khách hàng chỉ mua 1 lần (97.02%)                                         │
-│    └─ 2,744 khách hàng mua lặp lại ≥ 2 lần (2.98%)                                     │
-└────────────────────────────────────────────────────────────────────────────────────────┘
+
+ 1. DỮ LIỆU GỐC BAN ĐẦU: 99,441 dòng 'customer_id'                                     
+     Bản chất: Mã phiên đặt hàng (Order Session Key). Mỗi đơn hàng sinh ra 1 ID mới.  
+
+                                             (Gom nhóm theo mã căn cước khách hàng thực tế)
+                                            
+
+ 2. KHÁCH HÀNG THỰC TẾ DUY NHẤT: 96,096 cá nhân 'customer_unique_id'                    
+     Chênh lệch 3,345 phiên phát sinh từ khách hàng mua lặp lại (Repeat Customers).  
+
+                                             (Lọc đơn hàng hoàn tất chu trình 'delivered' = 95,137 đơn)
+                                            
+
+ 3. QUẦN THỂ NGHIÊN CỨU HÀNH VI CHUẨN XÁC: N = 92,077 KHÁCH HÀNG DUY NHẤT               
+     89,333 khách hàng chỉ mua 1 lần (97.02%)                                         
+     2,744 khách hàng mua lặp lại ≥ 2 lần (2.98%)                                     
+
 ```
 
-#### 📌 Vì sao bắt buộc phải dùng quần thể $N = 92,077$ khách hàng?
+#### Vì sao bắt buộc phải dùng quần thể $N = 92,077$ khách hàng?
 1. Để phân tích các chỉ số hành vi cốt lõi như: *Thời gian giao hàng thực tế (`delivery_time_days`), Điểm đánh giá trải nghiệm (`review_score`), Chu kỳ mua lặp lại (`repeat_interval_days`), Tỷ lệ rời bỏ (`Churn`)*, khách hàng bắt buộc phải **đã nhận được hàng thành công (`order_status == 'delivered'`)**.
 2. Các đơn hàng có trạng thái `shipped`, `processing`, `invoiced` hoặc `canceled` chưa có mốc thời gian nhận hàng thực tế (`order_delivered_customer_date`), nếu đưa vào tính toán sẽ gây méo mó sai lệch các phân phối thống kê.
 3. Gom nhóm $95,137$ đơn hàng `delivered` theo `customer_unique_id`, ta thu được đúng **$92,077$ khách hàng duy nhất**, đảm bảo tính đồng bộ $100\%$ từ Bước 1 (Mô tả), Bước 2 (Chẩn đoán) đến Bước 3 (Dự báo Train $67,678$ + Test $24,399 = 92,077$).
