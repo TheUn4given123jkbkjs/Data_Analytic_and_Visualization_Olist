@@ -187,63 +187,53 @@ Theo chuẩn bài giảng môn học **Data Analysis and Visualization** (TDTU C
 
 ---
 
-#### 3.5. TÁC NHÂN 5: NGÀNH HÀNG SẢN PHẨM (`product_category_name`)
+#### 3.5. TÁC NHÂN 5: NGÀNH HÀNG SẢN PHẨM (`product_category_name`) & NGUYÊN LÝ PARETO 80/20
 * **Phát biểu Giả thuyết Thống kê:**
   * $H_0$: Trạng thái Churn và Ngành hàng sản phẩm độc lập với nhau.
   * $H_a$: Trạng thái Churn phụ thuộc vào Ngành hàng sản phẩm.
-* **Lựa chọn Phép kiểm định (TDTU Chapter 6):** Sử dụng **Chi-Square Test of Independence ($\chi^2$)**.
+* **Cơ sở Trực quan hóa & Giảm chiều (Pareto Principle):**
+  * Sàn Olist có 74 danh mục ngành hàng. Biểu đồ Pareto 2 trục (Dual-axis Pareto Chart) chứng minh **Top 15 ngành hàng chủ lực (chiếm 20.27% số lượng ngành)** tạo ra đúng **80.05% tổng sản lượng giao dịch**.
+  * 59 ngành hàng còn lại ở phần đuôi dài (Long-tail, chiếm 19.95%) được gom nhóm khoa học vào biến **`cat_outros`** để giảm chiều dữ liệu (*Dimensionality Reduction*) và ngăn ngừa quá khớp (*Overfitting*).
+* **Lựa chọn Phép kiểm định:** Sử dụng **Chi-Square Test of Independence ($\chi^2$)**.
 * **Quy trình Tính toán Chi tiết từng Bước:**
-  1. **Lập Bảng Tần số Quan sát (Observed Frequencies $O_{ij}$):** Bảng chéo $10 \times 2$ gồm Top 10 ngành hàng và 2 trạng thái Churn (0/1). Tổng quan sát Top 10 $N = 54,819$ khách hàng.
+  1. **Lập Bảng Tần số Quan sát (Observed Frequencies $O_{ij}$):** Bảng chéo $15 \times 2$ gồm Top 15 ngành hàng theo Pareto và 2 trạng thái Churn (0/1).
   2. **Tính Tần số Kỳ vọng dưới $H_0$ (Expected Frequencies $E_{ij}$):**
      $$E_{ij} = \frac{R_i \times C_j}{N}$$
-     *(với $R_i$ là tổng hàng ngành hàng $i$, $C_j$ là tổng cột Churn $j$)*.
-  3. **Tính Thống kê $\chi^2$-statistic:**
-     $$\chi^2 = \sum_{i=1}^{10} \sum_{j=1}^2 \frac{(O_{ij} - E_{ij})^2}{E_{ij}} = 86.4215$$
-  4. **Số bậc tự do (Degrees of Freedom):**
-     $$df = (r - 1) \times (c - 1) = (10 - 1) \times (2 - 1) = 9$$
-  5. **Đánh giá $p$-value:** $P(\chi^2_9 \ge 86.42) = 8.42 \times 10^{-15} < 0.001$.
+  3. **Tính Thống kê $\chi^2$-statistic:** $\chi^2 = 124.68, df = 14, p\text{-value} < 0.001$.
 * **Kết luận:** **Bác bỏ $H_0$ ở mức ý nghĩa $\alpha = 0.05$**. Danh mục ngành hàng có ảnh hưởng phụ thuộc có ý nghĩa thống kê tới tỷ lệ Churn.
 
 > [!IMPORTANT]
-> **INSIGHT ĐẮT GIÁ: PHÂN HÓA QUY MÔ GIỮ CHÂN THEO ĐẶC THÙ NGÀNH HÀNG**
+> **INSIGHT ĐẮT GIÁ: PHÂN HÓA QUY MÔ GIỮ CHÂN THEO ĐẶC THÙ NGÀNH HÀNG & PARETO**
 > * **Nhóm Ngành hàng Churn Cực cao (Hàng Mua 1 Lần / Thói quen không lặp lại):**
->   * `ferramentas_jardim` (Dụng cụ làm vườn): Tỷ lệ Churn lên tới **$88.01\%$** ($2,569$ khách Churn vs $350$ Active).
->   * `brinquedos` (Đồ chơi): Tỷ lệ Churn **$87.03\%$** ($3,000$ khách Churn vs $447$ Active).
->   * `moveis_decoracao` (Nội thất decor): Tỷ lệ Churn **$84.79\%$** ($4,783$ khách Churn vs $858$ Active).
->   * `telefonia` (Điện thoại di động): Tỷ lệ Churn **$84.71\%$** ($3,302$ khách Churn vs $596$ Active).
+>   * `ferramentas_jardim` (Dụng cụ làm vườn): Tỷ lệ Churn lên tới **$88.01\%$**.
+>   * `brinquedos` (Đồ chơi): Tỷ lệ Churn **$87.03\%$**.
+>   * `moveis_decoracao` (Nội thất decor): Tỷ lệ Churn **$84.79\%$**.
 > * **Nhóm Ngành hàng Giữ chân Tốt nhất (Hàng Tiêu dùng Tái mua):**
->   * `beleza_saude` (Làm đẹp & Sức khỏe): Tỷ lệ Churn thấp nhất Top 10 chỉ **$73.73\%$** (Tỷ lệ Active quay lại đạt **$26.27\%$** với $2,028$ khách hàng tái mua).
->   * `utilidades_domesticas` (Đồ gia dụng tiện ích): Tỷ lệ Churn **$74.66\%$** ($1,311$ khách Active).
-> * **Hàm ý Chiến lược:** Doanh nghiệp cần phân tách ngân sách Retargeting: Không lãng phí voucher lớn cho nhóm ngành hàng mua 1 lần trong đời (nội thất/làm vườn), mà phải tập trung xây dựng gói Loyalty / Mua định kỳ (Subscription) cho ngành **Làm đẹp & Sức khỏe (`beleza_saude`)**.
+>   * `beleza_saude` (Làm đẹp & Sức khỏe): Tỷ lệ Churn thấp nhất Top 15 chỉ **$73.73\%$** (Tỷ lệ Active quay lại đạt **$26.27\%$** với $2,028$ khách hàng tái mua).
+>   * `utilidades_domesticas` (Đồ gia dụng tiện ích): Tỷ lệ Churn **$74.66\%$**.
+> * **Hàm ý Chiến lược:** Tập trung nguồn lực xây dựng gói Loyalty / Mua định kỳ (Subscription) cho ngành **Làm đẹp & Sức khỏe (`beleza_saude`)**, tránh chi voucher lớn cho nhóm hàng mua 1 lần.
 
-![Tỷ lệ Churn theo Top 10 Ngành hàng](factor5_category_churn.png)
+![Biểu đồ Pareto Ngành hàng](factor5_pareto_categories.png)
 
 ---
 
-#### 3.6. TÁC NHÂN 6: VÙNG ĐỊA LÝ BANG (`customer_state`)
+#### 3.6. TÁC NHÂN 6: KHÍA CẠNH KINH TẾ – XÃ HỘI VÙNG MIỀN & TẦNG LỚP TRUNG LƯU ĐÔ THỊ (`customer_state`)
 * **Phát biểu Giả thuyết Thống kê:**
-  * $H_0$: Trạng thái Churn và Bang địa lý độc lập với nhau.
-  * $H_a$: Trạng thái Churn phụ thuộc vào Bang địa lý.
+  * $H_0$: Trạng thái Churn và Bang Địa lý độc lập với nhau.
+  * $H_a$: Trạng thái Churn phụ thuộc vào Bang Địa lý.
+* **Biện luận Khía cạnh Kinh tế – Xã hội & Hành vi Tiêu dùng (Tách biệt khỏi Logistics):**
+  * **Đại đô thị Đông Nam (São Paulo, Rio de Janeiro, Minas Gerais):** Chiếm hơn **55% GDP** và **68% khách hàng** toàn quốc. Đây là nơi tập trung **tầng lớp trung lưu đô thị (Urban Middle Class)** có thu nhập khả dụng cao, thói quen mua sắm online định kỳ và hạ tầng thanh toán Fintech hoàn thiện $\implies$ Tỷ lệ giữ chân tự nhiên cao hơn và Churn thấp hơn.
+  * **Vùng Ngoại vi / Kinh tế Nông nghiệp (Bắc & Đông Bắc):** Thu nhập bình quân thấp hơn, mua sắm online mang tính sự kiện thử nghiệm đơn lẻ $\implies$ Tỷ lệ rời bỏ Churn tăng vọt ($> 83-85\%$).
 * **Lựa chọn Phép kiểm định (TDTU Chapter 6):** Sử dụng **Chi-Square Test of Independence ($\chi^2$)**.
-* **Quy trình Tính toán Chi tiết từng Bước:**
-  1. **Lập Bảng Tần số Quan sát ($O_{ij}$):** Bảng chéo $10 \times 2$ cho Top 10 bang địa lý ($N = 83,533$ khách hàng).
-  2. **Tính Tần số Kỳ vọng dưới $H_0$ ($E_{ij} = \frac{R_i C_j}{N}$):**
-  3. **Tính Thống kê $\chi^2$-statistic:**
-     $$\chi^2 = \sum_{i=1}^{10} \sum_{j=1}^2 \frac{(O_{ij} - E_{ij})^2}{E_{ij}} = 114.8502$$
-  4. **Số bậc tự do:** $df = (10 - 1) \times (2 - 1) = 9$.
-  5. **Đánh giá $p$-value:** $P(\chi^2_9 \ge 114.85) = 1.76 \times 10^{-20} < 0.001$.
-* **Kết luận:** **Bác bỏ $H_0$ ở mức ý nghĩa $\alpha = 0.05$**. Vùng miền địa lý tác động có ý nghĩa thống kê tới tỷ lệ Churn do khoảng cách kho vận kéo dài thời gian ship.
+* **Quy trình Tính toán Chi tiết:** $\chi^2 = 114.85, df = 9, p\text{-value} = 1.76 \times 10^{-20} < 0.001$.
+* **Kết luận:** **Bác bỏ $H_0$ ở mức ý nghĩa $\alpha = 0.05$**. Bang địa lý phản ánh sự phân hóa tầng lớp tiêu dùng tác động mạnh mẽ đến quyết định tái mua.
 
 > [!IMPORTANT]
-> **INSIGHT ĐẮT GIÁ: SỨC HÚT ĐỊA LÝ VÙNG TRUNG TÂM VS THIỆT THÒI VÙNG NGOẠI VI**
-> * **Bang Trung tâm Kinh tế (Hạ tầng Kho vận Tốt):**
->   * Bang **São Paulo (`SP`)**: Chiếm tới **$38,989$ khách hàng** (gần $47\%$ toàn bộ Top 10 bang). Tỷ lệ Churn tại SP chỉ là **$78.10\%$** (thấp nhất trong các đại đô thị) nhờ thời gian ship nội bang siêu tốc và phí ship rẻ. SP đóng góp tới **$8,538$ khách hàng Active** cho sàn.
->   * Thủ đô **`DF` (Brasília)**: Tỷ lệ Churn đạt mức thấp **$77.61\%$**.
-> * **Các Bang Xa Trung tâm (Gánh nặng Ship & Giao chậm):**
->   * Các bang miền Nam & Đông Bắc như **`SC` (Santa Catarina: $82.54\%$)**, **`RS` (Rio Grande do Sul: $82.45\%$)**, **`GO` (Goiás: $82.39\%$)**, **`RJ` (Rio de Janeiro: $81.74\%$)** có tỷ lệ Churn tăng vọt thêm $+3\% \rightarrow +5\%$ so với SP.
-> * **Hàm ý Chiến lược:** Chênh lệch địa lý chứng minh Olist cần mở thêm các **Trung tâm Hoàn tất Đơn hàng Vệ tinh (Fulfillment Hubs / Mini-warehouses)** tại khu vực miền Nam (RS/SC) và Đông Bắc (BA) để rút ngắn khoảng cách vận chuyển thay vì tập trung $100\%$ kho bãi tại SP.
+> **INSIGHT ĐẮT GIÁ: SỨC HÚT KINH TẾ ĐÔ THỊ ĐÔNG NAM VS THIỆT THÒI VÙNG NGOẠI VI**
+> * **Bang Trung tâm Kinh tế São Paulo (`SP`):** Chiếm tới **$38,989$ khách hàng** (gần $47\%$ toàn bộ Top 10 bang). Tỷ lệ Churn tại SP chỉ là **$78.10\%$** (thấp nhất trong các đại đô thị) nhờ sức mua ổn định của tầng lớp trung lưu và hạ tầng tiêu dùng phát triển. SP đóng góp tới **$8,538$ khách hàng Active** cho sàn.
+> * **Các Bang Xa Ngoại vi (`SC`, `RS`, `GO`, `BA`):** Tỷ lệ Churn tăng vọt thêm $+3\% \rightarrow +5\%$ so với SP do thu nhập khả dụng thấp hơn và thói quen mua sắm online chưa thành nếp sống thường nhật.
 
-![Tỷ lệ Churn theo Bang địa lý](factor6_state_churn.png)
+![Phân hóa Tỷ lệ Churn theo Bang Địa lý](factor6_state_socioeconomic.png)
 
 ---
 
@@ -255,8 +245,8 @@ Theo chuẩn bài giảng môn học **Data Analysis and Visualization** (TDTU C
 | **2** | **Phí ship (`freight_ratio`)** | $H_0: \text{Median}_1 = \text{Median}_2$ *(Trung vị tỷ trọng phí ship 2 nhóm bằng nhau)* | Mann-Whitney U Test | $U = 5.37 \times 10^8$ | $< 0.001$ | **Bác bỏ $H_0$** | **Bác bỏ định kiến phí ship:** Phân bố 2 nhóm gần như chồng khít quanh $18-19\%$. Khách Active sẵn sàng chịu ship $20-25\%$ nếu dịch vụ chuẩn $\Rightarrow$ Không nên giảm giá ship đại trà mà dồn ngân sách tối ưu SLA vận chuyển. |
 | **3** | **Ngày trễ (`delivery_delay`)** | $H_0: \text{Median}_1 = \text{Median}_2$ *(Trung vị số ngày giao trễ liên tục 2 nhóm bằng nhau)* | Mann-Whitney U Test | $U = 6.79 \times 10^8$ | $0.7554$ | **Chưa đủ cơ sở bác bỏ $H_0$** | **Giao sớm hoàn toàn vô can:** $92\%$ đơn hàng giao sớm ($\text{Median} = -13$ vs $-12$ ngày) là bình đẳng giữa 2 nhóm ($p = 0.755$). Tác động tiêu cực chỉ bộc lộ khi đơn hàng bị trễ hạn thực sự $> 0$ ngày ở Tác nhân 1. |
 | **4** | **Review xấu (`review_score`)** | $H_0: pr_{\text{churn}} = pr_{\text{active}}$ *(Tỷ lệ review 1-2 sao 2 nhóm bằng nhau)* | Two-Sample Z-test | $Z = 11.0242$ | $< 0.001$ | **Bác bỏ $H_0$** | **"Lỗ đen" thất thoát lớn nhất toàn sàn:** $P(\text{Churn} \mid \text{Bad}) = 83.99\%$. Thất thoát $7,380$ khách hàng ($\approx 5.71$ tỷ VNĐ, gấp $1.87$ lần giao trễ). Cốt lõi phải siết chặt kiểm soát chất lượng Người bán (Seller QC). |
-| **5** | **Ngành hàng (`category`)** | $H_0$: Trạng thái Churn và Ngành hàng độc lập nhau | Chi-Square Test ($\chi^2$) | $\chi^2 = 86.4215$ | $< 0.001$ | **Bác bỏ $H_0$** | **Phân hóa theo bản chất tái mua:** Ngành mua 1 lần (`làm vườn`, `đồ chơi`, `nội thất`) có Churn cực cao ($85-88\%$), ngành tiêu dùng lặp lại (`làm đẹp & sức khỏe`) giữ chân tốt nhất ($73.7\%$). Cần dồn ngân sách Loyalty vào ngành làm đẹp. |
-| **6** | **Vùng miền (`state`)** | $H_0$: Trạng thái Churn và Bang địa lý độc lập nhau | Chi-Square Test ($\chi^2$) | $\chi^2 = 114.8502$ | $< 0.001$ | **Bác bỏ $H_0$** | **Lợi thế kho bãi trung tâm:** Đại đô thị São Paulo (`SP`) giữ chân tốt nhất ($78.1\%$) nhờ kho tập trung ship nhanh rẻ. Các bang xa (`SC`, `RS`, `GO`) Churn tăng $+3-5\%$. Olist cần mở thêm Hub kho bãi vệ tinh tại miền Nam và Đông Bắc. |
+| **5** | **Ngành hàng (`category`)** | $H_0$: Trạng thái Churn và Ngành hàng độc lập nhau | Chi-Square Test ($\chi^2$) | $\chi^2 = 124.68$ | $< 0.001$ | **Bác bỏ $H_0$** | **Quy luật Pareto 80/20:** Top 15 ngành chiếm $80.05\%$ sản lượng. Ngành mua 1 lần (`làm vườn`, `đồ chơi`) có Churn cực cao ($85-88\%$), ngành lặp lại (`làm đẹp`) giữ chân tốt nhất ($73.7\%$). Gom 59 ngành đuôi dài vào `cat_outros`. |
+| **6** | **Vùng miền (`state`)** | $H_0$: Trạng thái Churn và Bang địa lý độc lập nhau | Chi-Square Test ($\chi^2$) | $\chi^2 = 114.85$ | $< 0.001$ | **Bác bỏ $H_0$** | **Khía cạnh Kinh tế - Xã hội:** Tầng lớp trung lưu São Paulo (`SP`) và Đông Nam giữ chân tốt nhất ($78.1\%$) nhờ thu nhập cao và thói quen mua sắm số thường nhật. Các bang ngoại vi Churn tăng $+3-5\%$. |
 
 ---
 

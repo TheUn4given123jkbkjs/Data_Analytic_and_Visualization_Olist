@@ -111,18 +111,18 @@ $$\hat{p} \pm Z_{\alpha/2} \cdot S.E. = \hat{p} \pm 1.96 \cdot \sqrt{\frac{\hat{
 #### 4.1. Lọc nhiễu Đơn hàng Cùng phiên (Same-Session Filtering):
 Trong tổng số 3,060 khoảng cách giữa các đơn hàng mua lặp lại, có **900 khoảng cách $< 1.0$ ngày** (chiếm 29.41%). Đây là các trường hợp khách hàng tách giỏ hàng mua nhiều đơn trong cùng một phiên mua sắm (Same-session order splits). Việc giữ lại các đơn này sẽ làm sai lệch nghiêm trọng chu kỳ quay lại thực tế.
 
-#### 4.2. Bảng Tóm tắt 5 Số của Chu kỳ Mua lại (`repeat_interval_days`):
+#### 4.2. Bảng Tóm tắt 5 Số của Chu kỳ Mua lại Thực tế (`repeat_interval_days`):
 
-| Chỉ số Phân vị | Dữ liệu Thô (Bao gồm đơn $<1$d) | Dữ liệu Đã Lọc Nhiễu ($\ge 1$d) | Diễn giải Thống kê |
-| :--- | :---: | :---: | :--- |
-| **Số lượng mẫu (Count)** | 3,060 cặp đơn | **2,160 phiên mua** | Đã loại bỏ 900 giao dịch nhiễu cùng phiên |
-| **Min (Tối thiểu)** | 0.00 ngày | **1.01 ngày** | Khoảng cách ngắn nhất giữa 2 phiên riêng biệt |
-| **Q1 (25th Percentile)** | 0.01 ngày | **23.12 ngày (~0.8 tháng)** | 25% khách mua lại trong vòng 23 ngày |
-| **Median (Q2 - Trung vị)** | **29.42 ngày** | **71.03 ngày (~2.37 tháng)** | **50% khách quay lại mua trong vòng 71 ngày** |
-| **Q3 (75th Percentile)** | **121.22 ngày** | **171.44 ngày (~5.71 tháng)** | **75% khách quay lại mua trong vòng 171 ngày** |
-| **Max (Tối đa)** | 608.98 ngày | **608.98 ngày** | Chu kỳ mua lại dài nhất ghi nhận |
+| Chỉ số Phân vị | Dữ liệu Đã Lọc Nhiễu ($\ge 1.0\text{ ngày}$) | Diễn giải Ý nghĩa Thống kê & Nghiệp vụ |
+| :--- | :---: | :--- |
+| **Số lượng mẫu phân tích** | **2,160 phiên mua** | Đã loại bỏ hoàn toàn các đơn hàng tách giỏ cùng phiên ($<1.0\text{ ngày}$) |
+| **Min (Tối thiểu)** | **1.01 ngày** | Khoảng cách ngắn nhất giữa 2 phiên mua sắm độc lập |
+| **Q1 (25th Percentile)** | **23.12 ngày (~0.8 tháng)** | $25\%$ khách hàng mua lặp lại quay lại rất nhanh trong vòng 23 ngày |
+| **Median (Q2 - Trung vị)** | **71.03 ngày (~2.37 tháng)** | **$50\%$ khách hàng hoàn tất việc mua lặp lại trong vòng 71 ngày** |
+| **Q3 (75th Percentile)** | **171.44 ngày (~5.71 tháng)** | **$75\%$ khách hàng hoàn tất việc mua lặp lại trước mốc 171 ngày** |
+| **Max (Tối đa)** | **608.98 ngày** | Chu kỳ mua lại dài nhất ghi nhận trên sàn |
 
-![Biểu đồ So sánh Phân bố Chu kỳ Mua lại Trước và Sau khi Lọc đơn cùng phiên](repeat_interval_distribution.png)
+![Biểu đồ Phân bố Chu kỳ Mua lại Thực tế](repeat_interval_filtered.png)
 
 #### 4.3. Biện luận Học thuật Xác lập Ngưỡng Churn ($Recency \ge 90$ ngày & Khung $90 \rightarrow 180$ ngày):
 1. **Vượt quá Trung vị Quần thể ($71.03 < 90$ ngày):**
@@ -130,26 +130,24 @@ Trong tổng số 3,060 khoảng cách giữa các đơn hàng mua lặp lại, 
    * Khi một khách hàng đạt $Recency \ge 90$ ngày, họ đã vượt quá chu kỳ tái mua tự nhiên của hơn 50% tập khách hàng.
 2. **Cửa sổ Vàng Kích hoạt (Actionable Window: $90 \rightarrow 180$ ngày $\approx Q_3$):**
    * Phân vị thứ ba $Q_3 = 171.44$ ngày (~5.7 tháng, xấp xỉ 180 ngày).
-   * Khoảng từ **90 đến 180 ngày** là "cửa sổ vàng" để doanh nghiệp can thiệp re-engagement / win-back. Nếu không kích hoạt trong khoảng này, sau 180 ngày (vượt $Q_3$), xác suất khách hàng tự quay lại giảm xuống dưới 25%.
-3. **Phân tầng Nguy cơ Churn (Multi-stage Churn):**
-   * **Cảnh báo nguy cơ ($71 - 90$ ngày):** Vượt quá thói quen trung vị $Q_2$.
-   * **Churn Tạm thời / At-Risk ($90 - 180$ ngày):** Vùng nguy cơ cao, nằm giữa $Q_2$ và $Q_3$.
-   * **Churn Hoàn toàn / Hard Churn ($> 180$ ngày):** Vượt qua $Q_3$, khả năng quay lại $< 25\%$.
-4. **Giải trình Cơ sở Học thuật Chọn Mốc 90 - 180 ngày (thay vì 80 - 171 ngày):**
-   * **Biên độ an toàn loại trừ nhiễu hành vi (Margin of Safety):** $Q_2 = 71.03$ ngày. Nếu chọn mốc 80 ngày, khoảng đệm chỉ là 9 ngày — quá ngắn để phân biệt giữa biến động ngẫu nhiên (chờ lương, bận cá nhân, lễ tết) với hành vi rời bỏ thực sự. Mốc **90 ngày** tạo ra khoảng đệm an toàn **19 ngày** ($\approx 71 + 19 = 90$), giúp loại trừ nhiễu ngẫu nhiên ngắn hạn.
-   * **Cân bằng giữa Sai số Loại I và Loại II (Type I vs Type II Error):** Mốc 80 ngày (quá sát $Q_2$) khiến nhiều khách hàng trễ vài ngày bị gán nhãn Churn nhầm (False Positive), làm lãng phí ngân sách Marketing/Voucher. Mốc 90 ngày giúp bộ lọc đạt độ chính xác (**Precision**) cao hơn.
-   * **Phù hợp với Chu kỳ Vận hành Quản trị (Business Operating Rhythm):** Doanh nghiệp vận hành báo cáo và ngân sách theo **Quý (Quarterly: 90 ngày / 3 tháng)** và **Bán niên (Semi-annually: 180 ngày / 6 tháng)**. Mốc 90 - 180 ngày giúp tích hợp trực tiếp vào hệ thống CRM tự động hóa.
-   * **Quy chuẩn hóa Tiệm cận của $Q_3$ ($171.44 \approx 180$ ngày):** Phân vị $Q_3 = 171.44$ ngày chỉ cách 180 ngày đúng 8.5 ngày (sai số $< 5\%$). Việc làm tròn tiệm cận $171.44 \rightarrow 180$ ngày là kỹ thuật quy chuẩn hóa khoảng thời gian (Time Horizon Normalization) tiêu chuẩn trong Thống kê Ứng dụng.
+   * Khoảng từ **90 đến 180 ngày** là "Cửa sổ Vàng" để doanh nghiệp can thiệp giữ chân khách hàng (Win-back campaigns). Nếu không kích hoạt trong khoảng này, sau 180 ngày (vượt $Q_3$), xác suất khách hàng tự quay lại giảm xuống dưới 25%.
+3. **Giải trình Cơ sở Học thuật Chọn Mốc 90 - 180 ngày:**
+   * **Biên độ an toàn loại trừ nhiễu hành vi:** Mốc 90 ngày tạo ra khoảng đệm an toàn 19 ngày so với $Q_2 = 71.03$ ngày, giúp loại trừ các biến động ngẫu nhiên ngắn hạn (chờ lương, lễ tết).
+   * **Phù hợp với Chu kỳ Vận hành Quản trị:** Doanh nghiệp vận hành báo cáo và ngân sách theo **Quý (90 ngày / 3 tháng)** và **Bán niên (180 ngày / 6 tháng)**. Mốc 90 - 180 ngày giúp tích hợp trực tiếp vào hệ thống CRM tự động hóa.
 
 ---
 
-### 5. PHÂN TÍCH TOP 10 NGÀNH HÀNG THEO DOANH THU (CATEGORICAL RANKING)
+### 5. PHÂN TÍCH BIỂU ĐỒ PARETO NGÀNH HÀNG (PARETO 80/20 PRINCIPLE - TDTU CHAPTER 02)
 
-* **Biến phân tích:** `product_category_name` — dữ liệu định tính danh nghĩa (Nominal Categorical Data).
-* **Lý do chọn Horizontal Bar Chart (TDTU Chapter 2):** Danh mục sản phẩm không có thứ tự tự nhiên. Bar Chart giúp xếp hạng giảm dần trực quan, hiển thị rõ tên ngành hàng dài mà không bị cắt chữ (so với Vertical Bar Chart).
-* **Nhận xét chính:** Ngành hàng dẫn đầu (`bed_bath_table`) đóng góp ~9.9% tổng doanh thu. Top 3 ngành hàng đóng góp ~25% doanh thu. Phân bố doanh thu theo ngành hàng có tính đa dạng cao, không bị phụ thuộc vào duy nhất một ngành hàng.
+* **Biến phân tích:** `product_category_name` (Dữ liệu định tính danh nghĩa gồm 74 ngành hàng).
+* **Lý do chọn Biểu đồ Pareto (TDTU Chapter 2 Part 02 - Section 8):**
+  * Sắp xếp các ngành hàng theo thứ tự giảm dần về sản lượng bán ra (Trục Bar bên trái) kết hợp đường cong tích lũy phần trăm (Cumulative Percentage Line - Trục bên phải).
+  * Giúp nhận diện chính xác các nhân tố đóng góp trọng yếu (*Vital Few vs Trivial Many*).
+* **Bằng chứng Thống kê & Cơ sở Khoa học Giảm chiều:**
+  * **Top 15 ngành hàng chủ lực** (`cama_mesa_banho`, `beleza_saude`, `esporte_lazer`, `moveis_decoracao`, `informatica_acessorios`, `utilidades_domesticas`, `relogios_presentes`, `telefonia`, `brinquedos`, `automotivo`, `ferramentas_jardim`, `cool_stuff`, `perfumaria`, `eletronicos`, `bebes`) chiếm **20.27% số lượng ngành** nhưng tạo ra đúng **80.05% tổng sản lượng giao dịch**.
+  * **59 ngành hàng còn lại (Long-tail)** chỉ đóng góp $19.95\%$, tạo tiền đề phương pháp luận vững chắc để gom nhóm thành **`cat_outros`** trong mô hình dự báo nhằm ngăn ngừa quá khớp ma trận thưa.
 
-![Top 10 Ngành hàng có Doanh thu Cao nhất](top10_categories.png)
+![Biểu đồ Pareto Ngành hàng](pareto_categories.png)
 
 ---
 
