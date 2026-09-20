@@ -59,10 +59,20 @@ Trích xuất **33 đặc trưng ứng viên** độc lập từ Đơn hàng đ�
 
 ---
 
-### 2.2. Phân chia Chuỗi Thời gian (Temporal Split)
-* **Mốc Cutoff Split:** `2018-04-30 23:59:59`
-* **Cửa sổ Huấn luyện (Train Window):** Đơn đầu từ `2016-10-01` đến `2018-04-30` ($67,678$ dòng, $3.61\%$ retain).
-* **Cửa sổ Kiểm thử (Test Window):** Đơn đầu từ `2018-05-01` đến `2018-07-30` ($17,950$ dòng, $1.48\%$ retain).
+### 2.2. Phân chia Chuỗi Thời gian (Temporal Split) & Cửa sổ Quan sát Nhãn
+Để đảm bảo nguyên tắc vàng **Zero Data Leakage theo thời gian** (không dùng dữ liệu tương lai để dự đoán quá khứ), toàn bộ dữ liệu đơn hàng đầu tiên ($N = 85.628$) được chia thành 3 giai đoạn rõ ràng:
+
+* **1. Cửa sổ Huấn luyện (Train Window - Xanh dương):** 
+  - Khoảng thời gian: Từ `2016-10-01` đến `2018-04-30` ($67.678$ khách hàng, chiếm $79.04\%$ tổng tệp).
+  - Tỷ lệ giữ chân thực tế: $3.61\%$ ($2.446$ khách hàng quay lại).
+* **2. Cửa sổ Kiểm thử (Test Window - Đỏ):** 
+  - Khoảng thời gian: Từ `2018-05-01` đến `2018-07-30` ($17.950$ khách hàng, chiếm $20.96\%$ tổng tệp).
+  - Tỷ lệ giữ chân thực tế: $1.48\%$ ($265$ khách hàng quay lại).
+* **3. Vùng đệm Quan sát Nhãn (Performance / Observation Window - Xanh lá cây):** 
+  - Khoảng thời gian: Từ `2018-08-01` đến `2018-10-17` (thời điểm kết thúc bộ dữ liệu Olist).
+  - **Mục đích phương pháp luận:** Tạo ra một vùng đệm kéo dài **hơn 2,5 tháng (78 ngày)** để làm thời gian chờ quan sát xem các khách hàng mua đơn đầu tiên trong tập Test (tháng 5-7/2018) có thực sự quay lại mua đơn thứ 2 hay không. Việc chừa ra vùng đệm 78 ngày này giúp **loại bỏ hoàn toàn lỗi thiên lệch cắt phải (Right-Censoring Bias)** — tránh gán nhãn sai cho những khách hàng chưa kịp có đủ thời gian để mua lại.
+
+![Phân bố chuỗi thời gian Train, Test và Vùng đệm](time_split_distribution.png)
 
 ---
 

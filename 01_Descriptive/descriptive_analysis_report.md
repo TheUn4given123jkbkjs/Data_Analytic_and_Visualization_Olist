@@ -3,10 +3,15 @@
 
 ---
 
-### 1. BỐI CẢNH & MỤC TIÊU PHÂN TÍCH MÔ TẢ (DESCRIPTIVE PURPOSE)
+### 1. BỐI CẢNH, KHUNG THỜI GIAN & MỤC TIÊU PHÂN TÍCH MÔ TẢ (DESCRIPTIVE PURPOSE)
 Theo lý thuyết môn học **Data Analysis and Visualization** (TDTU Chapter 1 & 3):
 * **Phân tích Mô tả (Descriptive Analytics)** có nhiệm vụ trả lời câu hỏi *"Chuyện gì đã xảy ra?"* ($What\ happened?$) thông qua việc tổng hợp dữ liệu giao dịch thành các chỉ số thống kê đo lường xu hướng trung tâm, độ phân tán và đồ họa trực quan.
-* Phân tích được thực thi trên toàn bộ **Quần thể quan sát (Population $N = 92,077$ khách hàng định danh duy nhất `customer_unique_id`)** phát sinh đơn hàng giao thành công (`order_status = 'delivered'`).
+* **Khung thời gian toàn diện của Bộ dữ liệu (Dataset Timeline):**
+  - Mốc bắt đầu ghi nhận: `2016-09-04 21:15:19` (Đơn hàng đầu tiên trong hệ thống).
+  - Mốc kết thúc ghi nhận: `2018-10-17 17:30:18` (Đánh giá và phản hồi cuối cùng).
+  - Giai đoạn hoạt động kinh doanh chính: Tập trung chủ yếu từ **tháng 01/2017 đến tháng 08/2018** (giai đoạn cuối năm 2016 chỉ có một lượng nhỏ đơn hàng thử nghiệm ban đầu).
+  - Quy mô dữ liệu thô: 99.441 đơn hàng (trong đó 96.478 đơn giao thành công) thuộc về 96.096 khách hàng định danh duy nhất.
+* **Quần thể phân tích chính thức:** Phân tích được thực thi trên toàn bộ **Quần thể quan sát (Population $N = 92,077$ khách hàng định danh duy nhất `customer_unique_id`)** phát sinh đơn hàng giao thành công (`order_status = 'delivered'`).
 
 ---
 
