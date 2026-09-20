@@ -1,17 +1,20 @@
 # BÁO CÁO PHÂN TÍCH MÔ TẢ HỌC THUẬT (DESCRIPTIVE ANALYTICS REPORT)
+
 ## MÔ TẢ THỐNG KÊ QUẦN THỂ, KHOẢNG TIN CẬY 95% & QUY TẮC ĐỒ HỌA THEO LÝ THUYẾT MÔN HỌC
 
 ---
 
 ### 1. BỐI CẢNH, KHUNG THỜI GIAN & MỤC TIÊU PHÂN TÍCH MÔ TẢ (DESCRIPTIVE PURPOSE)
+
 Theo lý thuyết môn học **Data Analysis and Visualization** (TDTU Chapter 1 & 3):
-* **Phân tích Mô tả (Descriptive Analytics)** có nhiệm vụ trả lời câu hỏi *"Chuyện gì đã xảy ra?"* ($What\ happened?$) thông qua việc tổng hợp dữ liệu giao dịch thành các chỉ số thống kê đo lường xu hướng trung tâm, độ phân tán và đồ họa trực quan.
-* **Khung thời gian toàn diện của Bộ dữ liệu (Dataset Timeline):**
+
+- **Phân tích Mô tả (Descriptive Analytics)** có nhiệm vụ trả lời câu hỏi _"Chuyện gì đã xảy ra?"_ ($What\ happened?$) thông qua việc tổng hợp dữ liệu giao dịch thành các chỉ số thống kê đo lường xu hướng trung tâm, độ phân tán và đồ họa trực quan.
+- **Khung thời gian toàn diện của Bộ dữ liệu (Dataset Timeline):**
   - Mốc bắt đầu ghi nhận: `2016-09-04 21:15:19` (Đơn hàng đầu tiên trong hệ thống).
   - Mốc kết thúc ghi nhận: `2018-10-17 17:30:18` (Đánh giá và phản hồi cuối cùng).
   - Giai đoạn hoạt động kinh doanh chính: Tập trung chủ yếu từ **tháng 01/2017 đến tháng 08/2018** (giai đoạn cuối năm 2016 chỉ có một lượng nhỏ đơn hàng thử nghiệm ban đầu).
   - Quy mô dữ liệu thô: 99.441 đơn hàng (trong đó 96.478 đơn giao thành công) thuộc về 96.096 khách hàng định danh duy nhất.
-* **Quần thể phân tích chính thức:** Phân tích được thực thi trên toàn bộ **Quần thể quan sát (Population $N = 92,077$ khách hàng định danh duy nhất `customer_unique_id`)** phát sinh đơn hàng giao thành công (`order_status = 'delivered'`).
+- **Quần thể phân tích chính thức:** Phân tích được thực thi trên toàn bộ **Quần thể quan sát (Population $N = 92,077$ khách hàng định danh duy nhất `customer_unique_id`)** phát sinh đơn hàng giao thành công (`order_status = 'delivered'`).
 
 ---
 
@@ -23,6 +26,7 @@ Khoảng tin cậy 95% cho Tỷ lệ Quần thể (Proportion $p$) được tín
 $$\hat{p} \pm Z_{\alpha/2} \cdot S.E. = \hat{p} \pm 1.96 \cdot \sqrt{\frac{\hat{p}(1-\hat{p})}{N}}$$
 
 ##### **BƯỚC 1: Tính toán Khoảng Tin Cậy 95% cho Tỷ lệ Khách hàng Mua 1 lần ($F = 1$)**
+
 1. **Số liệu thô từ Quần thể:** Tong khách hàng duy nhất $N = 92,077$; Số khách chỉ mua 1 lần $x_1 = 89,333$.
 2. **Tính Ước lượng Điểm (Point Estimate $\hat{p}_1$):**
    $$\hat{p}_1 = \frac{x_1}{N} = \frac{89,333}{92,077} = 0.970199 \approx 97.02\%$$
@@ -34,6 +38,7 @@ $$\hat{p} \pm Z_{\alpha/2} \cdot S.E. = \hat{p} \pm 1.96 \cdot \sqrt{\frac{\hat{
    $$95\% \text{ CI}_1 = \hat{p}_1 \pm E_1 = [0.970199 - 0.0010982, 0.970199 + 0.0010982] = [0.969101, 0.971297] \approx [96.91\%, 97.13\%]$$
 
 ##### **BƯỚC 2: Tính toán Khoảng Tin Cậy 95% cho Tỷ lệ Khách hàng Mua lặp lại ($F \ge 2$)**
+
 1. **Số liệu thô từ Quần thể:** Số khách mua lặp lại $x_2 = 2,744$.
 2. **Tính Ước lượng Điểm ($\hat{p}_2$):**
    $$\hat{p}_2 = \frac{x_2}{N} = \frac{2,744}{92,077} = 0.029801 \approx 2.98\%$$
@@ -44,6 +49,7 @@ $$\hat{p} \pm Z_{\alpha/2} \cdot S.E. = \hat{p} \pm 1.96 \cdot \sqrt{\frac{\hat{
    $$95\% \text{ CI}_2 = \hat{p}_2 \pm E_2 = [0.029801 - 0.0010982, 0.029801 + 0.0010982] = [0.028703, 0.030899] \approx [2.87\%, 3.09\%]$$
 
 ##### **BƯỚC 3: Tính toán Khoảng Tin Cậy 95% cho Tỷ lệ Khách hàng Churn ($Recency \ge 90$ ngày)**
+
 1. **Số liệu thô từ Quần thể:** Số khách Churn $x_{\text{churn}} = 73,678$.
 2. **Tính Ước lượng Điểm ($\hat{p}_{\text{churn}}$):**
    $$\hat{p}_{\text{churn}} = \frac{x_{\text{churn}}}{N} = \frac{73,678}{92,077} = 0.800178 \approx 80.02\%$$
@@ -55,13 +61,13 @@ $$\hat{p} \pm Z_{\alpha/2} \cdot S.E. = \hat{p} \pm 1.96 \cdot \sqrt{\frac{\hat{
 
 #### Bảng kết quả Thống kê Quần thể & 95% CIs:
 
-| Chỉ số Phân tích | Ước lượng Điểm (Point Est.) | Sai số Chuẩn (S.E.) | Khoảng Tin Cậy 95% (95% CI) | Ghi chú Thống kê |
-| :--- | :---: | :---: | :---: | :--- |
-| **Tỷ lệ Mua 1 lần ($F = 1$)** | **97.02%** | 0.056% | **[96.91%, 97.13%]** | Chiếm đa số tuyệt đối toàn hệ thống |
-| **Tỷ lệ Mua lặp lại ($F \ge 2$)** | **2.98%** | 0.056% | **[2.87%, 3.09%]** | Tệp khách hàng trung thành |
-| **Tỷ lệ Churn ($Recency \ge 90$ ngày)** | **80.02%** | 0.131% | **[79.76%, 80.28%]** | Xác lập dựa trên phân vị chu kỳ mua lại (Mục 4) |
+| Chỉ số Phân tích                        | Ước lượng Điểm (Point Est.) | Sai số Chuẩn (S.E.) | Khoảng Tin Cậy 95% (95% CI) | Ghi chú Thống kê                                |
+| :-------------------------------------- | :-------------------------: | :-----------------: | :-------------------------: | :---------------------------------------------- |
+| **Tỷ lệ Mua 1 lần ($F = 1$)**           |         **97.02%**          |       0.056%        |    **[96.91%, 97.13%]**     | Chiếm đa số tuyệt đối toàn hệ thống             |
+| **Tỷ lệ Mua lặp lại ($F \ge 2$)**       |          **2.98%**          |       0.056%        |     **[2.87%, 3.09%]**      | Tệp khách hàng trung thành                      |
+| **Tỷ lệ Churn ($Recency \ge 90$ ngày)** |         **80.02%**          |       0.131%        |    **[79.76%, 80.28%]**     | Xác lập dựa trên phân vị chu kỳ mua lại (Mục 4) |
 
-![Tỷ lệ Quần thể Khách hàng Mua 1 lần vs Mua lặp lại và Tỷ lệ Churn](population_proportions.png)
+![Tỷ lệ Quần thể Khách hàng Mua 1 lần vs Mua lặp lại và Tỷ lệ Churn](assets/population_proportions.png)
 
 ---
 
@@ -70,6 +76,7 @@ $$\hat{p} \pm Z_{\alpha/2} \cdot S.E. = \hat{p} \pm 1.96 \cdot \sqrt{\frac{\hat{
 #### Thuyết minh Lý thuyết & Quy trình Tính toán Chi tiết từng Bước (TDTU Chapter 3 & 4):
 
 ##### **BƯỚC 1: Tính toán các Moment Trung tâm và Hệ số Hình dạng Phân bố Chi tiêu AOV (Spent per Customer)**
+
 1. **Số liệu Quần thể:** $N = 92,075$ khách hàng có giao dịch thanh toán; Chi tiêu trung bình mẫu $\bar{x} = \text{R\$ } 164.51$.
 2. **Tính Mẫu phương sai (Moment bậc 2 $m_2$):**
    $$m_2 = \frac{1}{N} \sum_{i=1}^N (x_i - \bar{x})^2 = 50,964.22$$
@@ -81,6 +88,7 @@ $$\hat{p} \pm Z_{\alpha/2} \cdot S.E. = \hat{p} \pm 1.96 \cdot \sqrt{\frac{\hat{
    $$Kurt = \frac{m_4}{m_2^2} - 3 = \frac{636,877,909,166.09}{(50,964.22)^2} - 3 = \frac{636,877,909,166.09}{2,597,351.72} - 3 = 245.2028 - 3 = 242.2028 \approx 242.20$$
 
 ##### **BƯỚC 2: Kiểm định Phân bố Chuẩn Chi tiêu AOV (Normality Test)**
+
 1. **Phép thử D'Agostino's $K^2$ Test:**
    $$K^2 = Z_1(S_k)^2 + Z_2(Kurt)^2 = (316.5218)^2 + (204.2981)^2 = 100,186.05 + 41,737.40 = 141,917.44$$
    $$p\text{-value} = P(\chi^2_2 \ge 141,917.44) = 0.0000 < 0.001$$
@@ -88,6 +96,7 @@ $$\hat{p} \pm Z_{\alpha/2} \cdot S.E. = \hat{p} \pm 1.96 \cdot \sqrt{\frac{\hat{
 3. **Cơ sở lựa chọn phép đo:** Do vi phạm phân bố chuẩn, các phép đo Parametric (Mean = R\$ 164.51, Std = R\$ 225.75) bị kéo lệch bởi các ngoại lệ chi tiêu cực đại (Outliers). Bắt buộc ưu tiên dùng các phép đo Phi tham số (Non-parametric): **Median = R\$ 107.54** và **IQR = R\$ 118.77**.
 
 ##### **BƯỚC 3: Tính toán Moment & Kiểm định Phân bố Chuẩn cho Tỷ trọng Phí Ship (`freight_ratio`)**
+
 1. **Số liệu Quần thể:** $N = 84,567$ khách hàng có thông tin đơn hàng; Trung bình $\bar{x} = 0.2110$.
 2. **Các Moment:** $m_2 = 0.014957$, $m_3 = 0.002037$, $m_4 = 0.000963$.
 3. **Tính Skewness & Excess Kurtosis:**
@@ -98,84 +107,87 @@ $$\hat{p} \pm Z_{\alpha/2} \cdot S.E. = \hat{p} \pm 1.96 \cdot \sqrt{\frac{\hat{
 
 #### Bảng Tóm tắt 5 Số của Chi tiêu (AOV / Spent 5-Number Summary):
 
-| Chỉ số Thống kê | Giá trị (BRL / R$) | Ý nghĩa Thống kê |
-| :--- | :---: | :--- |
-| **Min (Tối thiểu)** | **R\$ 0.00** | Đơn hàng thanh toán bằng Voucher 100% |
-| **Q1 (25th Percentile)** | **R\$ 62.82** | 25% khách chi tiêu dưới R\$ 62.82 |
-| **Median (Q2 - Trung vị)** | **R\$ 107.53** | **50% khách chi tiêu dưới R\$ 107.53** |
-| **Q3 (75th Percentile)** | **R\$ 181.58** | 75% khách chi tiêu dưới R\$ 181.58 |
-| **Max (Tối đa)** | **R\$ 13,664.08** | Khách hàng chi tiêu ngoại lệ cao nhất |
-| **IQR ($Q_3 - Q_1$)** | **R\$ 118.76** | Khoảng biến thiên 50% dữ liệu trung tâm |
+| Chỉ số Thống kê            | Giá trị (BRL / R$) | Ý nghĩa Thống kê                        |
+| :------------------------- | :----------------: | :-------------------------------------- |
+| **Min (Tối thiểu)**        |    **R\$ 0.00**    | Đơn hàng thanh toán bằng Voucher 100%   |
+| **Q1 (25th Percentile)**   |   **R\$ 62.82**    | 25% khách chi tiêu dưới R\$ 62.82       |
+| **Median (Q2 - Trung vị)** |   **R\$ 107.53**   | **50% khách chi tiêu dưới R\$ 107.53**  |
+| **Q3 (75th Percentile)**   |   **R\$ 181.58**   | 75% khách chi tiêu dưới R\$ 181.58      |
+| **Max (Tối đa)**           | **R\$ 13,664.08**  | Khách hàng chi tiêu ngoại lệ cao nhất   |
+| **IQR ($Q_3 - Q_1$)**      |   **R\$ 118.76**   | Khoảng biến thiên 50% dữ liệu trung tâm |
 
-![Phân bố Chi tiêu AOV và Boxplot Outliers](aov_distribution.png)
+![Phân bố Chi tiêu AOV và Boxplot Outliers](assets/aov_distribution.png)
 
 ---
 
 ### 4. PHÂN TÍCH MÔ TẢ CHU KỲ MUA LẠI & CƠ SỞ XÁC ĐỊNH NGƯỠNG CHURN (90 NGÀY)
 
 #### 4.1. Lọc nhiễu Đơn hàng Cùng phiên (Same-Session Filtering):
+
 Trong tổng số 3,060 khoảng cách giữa các đơn hàng mua lặp lại, có **900 khoảng cách $< 1.0$ ngày** (chiếm 29.41%). Đây là các trường hợp khách hàng tách giỏ hàng mua nhiều đơn trong cùng một phiên mua sắm (Same-session order splits). Việc giữ lại các đơn này sẽ làm sai lệch nghiêm trọng chu kỳ quay lại thực tế.
 
 #### 4.2. Bảng Tóm tắt 5 Số của Chu kỳ Mua lại Thực tế (`repeat_interval_days`):
 
-| Chỉ số Phân vị | Dữ liệu Đã Lọc Nhiễu ($\ge 1.0\text{ ngày}$) | Diễn giải Ý nghĩa Thống kê & Nghiệp vụ |
-| :--- | :---: | :--- |
-| **Số lượng mẫu phân tích** | **2,160 phiên mua** | Đã loại bỏ hoàn toàn các đơn hàng tách giỏ cùng phiên ($<1.0\text{ ngày}$) |
-| **Min (Tối thiểu)** | **1.01 ngày** | Khoảng cách ngắn nhất giữa 2 phiên mua sắm độc lập |
-| **Q1 (25th Percentile)** | **23.12 ngày (~0.8 tháng)** | $25\%$ khách hàng mua lặp lại quay lại rất nhanh trong vòng 23 ngày |
-| **Median (Q2 - Trung vị)** | **71.03 ngày (~2.37 tháng)** | **$50\%$ khách hàng hoàn tất việc mua lặp lại trong vòng 71 ngày** |
-| **Q3 (75th Percentile)** | **171.44 ngày (~5.71 tháng)** | **$75\%$ khách hàng hoàn tất việc mua lặp lại trước mốc 171 ngày** |
-| **Max (Tối đa)** | **608.98 ngày** | Chu kỳ mua lại dài nhất ghi nhận trên sàn |
+| Chỉ số Phân vị             | Dữ liệu Đã Lọc Nhiễu ($\ge 1.0\text{ ngày}$) | Diễn giải Ý nghĩa Thống kê & Nghiệp vụ                                     |
+| :------------------------- | :------------------------------------------: | :------------------------------------------------------------------------- |
+| **Số lượng mẫu phân tích** |             **2,160 phiên mua**              | Đã loại bỏ hoàn toàn các đơn hàng tách giỏ cùng phiên ($<1.0\text{ ngày}$) |
+| **Min (Tối thiểu)**        |                **1.01 ngày**                 | Khoảng cách ngắn nhất giữa 2 phiên mua sắm độc lập                         |
+| **Q1 (25th Percentile)**   |         **23.12 ngày (~0.8 tháng)**          | $25\%$ khách hàng mua lặp lại quay lại rất nhanh trong vòng 23 ngày        |
+| **Median (Q2 - Trung vị)** |         **71.03 ngày (~2.37 tháng)**         | **$50\%$ khách hàng hoàn tất việc mua lặp lại trong vòng 71 ngày**         |
+| **Q3 (75th Percentile)**   |        **171.44 ngày (~5.71 tháng)**         | **$75\%$ khách hàng hoàn tất việc mua lặp lại trước mốc 171 ngày**         |
+| **Max (Tối đa)**           |               **608.98 ngày**                | Chu kỳ mua lại dài nhất ghi nhận trên sàn                                  |
 
-![Biểu đồ Phân bố Chu kỳ Mua lại Thực tế](repeat_interval_filtered.png)
+![Biểu đồ Phân bố Chu kỳ Mua lại Thực tế](assets/repeat_interval_filtered.png)
 
 #### 4.3. Biện luận Học thuật Xác lập Ngưỡng Churn ($Recency \ge 90$ ngày & Khung $90 \rightarrow 180$ ngày):
+
 1. **Vượt quá Trung vị Quần thể ($71.03 < 90$ ngày):**
-   * Phân vị 2 ($Q_2 / Median = 71.03$ ngày) cho thấy 50% khách hàng quay lại mua sắm trong vòng 71 ngày.
-   * Khi một khách hàng đạt $Recency \ge 90$ ngày, họ đã vượt quá chu kỳ tái mua tự nhiên của hơn 50% tập khách hàng.
+   - Phân vị 2 ($Q_2 / Median = 71.03$ ngày) cho thấy 50% khách hàng quay lại mua sắm trong vòng 71 ngày.
+   - Khi một khách hàng đạt $Recency \ge 90$ ngày, họ đã vượt quá chu kỳ tái mua tự nhiên của hơn 50% tập khách hàng.
 2. **Cửa sổ Vàng Kích hoạt (Actionable Window: $90 \rightarrow 180$ ngày $\approx Q_3$):**
-   * Phân vị thứ ba $Q_3 = 171.44$ ngày (~5.7 tháng, xấp xỉ 180 ngày).
-   * Khoảng từ **90 đến 180 ngày** là "Cửa sổ Vàng" để doanh nghiệp can thiệp giữ chân khách hàng (Win-back campaigns). Nếu không kích hoạt trong khoảng này, sau 180 ngày (vượt $Q_3$), xác suất khách hàng tự quay lại giảm xuống dưới 25%.
+   - Phân vị thứ ba $Q_3 = 171.44$ ngày (~5.7 tháng, xấp xỉ 180 ngày).
+   - Khoảng từ **90 đến 180 ngày** là "Cửa sổ Vàng" để doanh nghiệp can thiệp giữ chân khách hàng (Win-back campaigns). Nếu không kích hoạt trong khoảng này, sau 180 ngày (vượt $Q_3$), xác suất khách hàng tự quay lại giảm xuống dưới 25%.
 3. **Giải trình Cơ sở Học thuật Chọn Mốc 90 - 180 ngày:**
-   * **Biên độ an toàn loại trừ nhiễu hành vi:** Mốc 90 ngày tạo ra khoảng đệm an toàn 19 ngày so với $Q_2 = 71.03$ ngày, giúp loại trừ các biến động ngẫu nhiên ngắn hạn (chờ lương, lễ tết).
-   * **Phù hợp với Chu kỳ Vận hành Quản trị:** Doanh nghiệp vận hành báo cáo và ngân sách theo **Quý (90 ngày / 3 tháng)** và **Bán niên (180 ngày / 6 tháng)**. Mốc 90 - 180 ngày giúp tích hợp trực tiếp vào hệ thống CRM tự động hóa.
+   - **Biên độ an toàn loại trừ nhiễu hành vi:** Mốc 90 ngày tạo ra khoảng đệm an toàn 19 ngày so với $Q_2 = 71.03$ ngày, giúp loại trừ các biến động ngẫu nhiên ngắn hạn (chờ lương, lễ tết).
+   - **Phù hợp với Chu kỳ Vận hành Quản trị:** Doanh nghiệp vận hành báo cáo và ngân sách theo **Quý (90 ngày / 3 tháng)** và **Bán niên (180 ngày / 6 tháng)**. Mốc 90 - 180 ngày giúp tích hợp trực tiếp vào hệ thống CRM tự động hóa.
 
 ---
 
 ### 5. PHÂN TÍCH BIỂU ĐỒ PARETO NGÀNH HÀNG (PARETO 80/20 PRINCIPLE - TDTU CHAPTER 02)
 
-* **Biến phân tích:** `product_category_name` (Dữ liệu định tính danh nghĩa gồm 74 ngành hàng).
-* **Lý do chọn Biểu đồ Pareto (TDTU Chapter 2 Part 02 - Section 8):**
-  * Sắp xếp các ngành hàng theo thứ tự giảm dần về sản lượng bán ra (Trục Bar bên trái) kết hợp đường cong tích lũy phần trăm (Cumulative Percentage Line - Trục bên phải).
-  * Giúp nhận diện chính xác các nhân tố đóng góp trọng yếu (*Vital Few vs Trivial Many*).
-* **Bằng chứng Thống kê & Cơ sở Khoa học Giảm chiều:**
-  * **Top 15 ngành hàng chủ lực** (`cama_mesa_banho`, `beleza_saude`, `esporte_lazer`, `moveis_decoracao`, `informatica_acessorios`, `utilidades_domesticas`, `relogios_presentes`, `telefonia`, `brinquedos`, `automotivo`, `ferramentas_jardim`, `cool_stuff`, `perfumaria`, `eletronicos`, `bebes`) chiếm **20.27% số lượng ngành** nhưng tạo ra đúng **80.05% tổng sản lượng giao dịch**.
-  * **59 ngành hàng còn lại (Long-tail)** chỉ đóng góp $19.95\%$, tạo tiền đề phương pháp luận vững chắc để gom nhóm thành **`cat_outros`** trong mô hình dự báo nhằm ngăn ngừa quá khớp ma trận thưa.
+- **Biến phân tích:** `product_category_name` (Dữ liệu định tính danh nghĩa gồm 74 ngành hàng).
+- **Lý do chọn Biểu đồ Pareto (TDTU Chapter 2 Part 02 - Section 8):**
+  - Sắp xếp các ngành hàng theo thứ tự giảm dần về sản lượng bán ra (Trục Bar bên trái) kết hợp đường cong tích lũy phần trăm (Cumulative Percentage Line - Trục bên phải).
+  - Giúp nhận diện chính xác các nhân tố đóng góp trọng yếu (_Vital Few vs Trivial Many_).
+- **Bằng chứng Thống kê & Cơ sở Khoa học Giảm chiều:**
+  - **Top 15 ngành hàng chủ lực** (`cama_mesa_banho`, `beleza_saude`, `esporte_lazer`, `moveis_decoracao`, `informatica_acessorios`, `utilidades_domesticas`, `relogios_presentes`, `telefonia`, `brinquedos`, `automotivo`, `ferramentas_jardim`, `cool_stuff`, `perfumaria`, `eletronicos`, `bebes`) chiếm **20.27% số lượng ngành** nhưng tạo ra đúng **80.05% tổng sản lượng giao dịch**.
+  - **59 ngành hàng còn lại (Long-tail)** chỉ đóng góp $19.95\%$, tạo tiền đề phương pháp luận vững chắc để gom nhóm thành **`cat_outros`** trong mô hình dự báo nhằm ngăn ngừa quá khớp ma trận thưa.
 
-![Biểu đồ Pareto Ngành hàng](pareto_categories.png)
+![Biểu đồ Pareto Ngành hàng](assets/pareto_categories.png)
 
 ---
 
 ### 6. PHÂN TÍCH TỶ TRỌNG PHƯƠNG THỨC THANH TOÁN (PAYMENT METHODS)
 
-* **Biến phân tích:** `payment_type` — dữ liệu định tính danh nghĩa (Nominal Categorical Data).
-* **Lý do chọn Donut Chart (TDTU Chapter 2):** Thể hiện tỷ trọng phần trăm trên tổng thể (part-of-whole) giữa các phương thức thanh toán. Donut Chart trực quan và dễ theo dõi hơn Bar Chart khi số nhóm ít (4 loại chính).
-* **Nhận xét chính:**
-  * **Credit Card (Thẻ tín dụng)** chiếm vị thế thống trị với **73.9%** tổng số giao dịch.
-  * **Boleto (Phương thức chuyển khoản qua mã vạch Brazil)** đứng thứ 2 với **19.0%**.
-  * Voucher (5.4%) và Debit Card (1.5%) chiếm tỷ lệ nhỏ.
-  * Phản ánh thói quen tiêu dùng đặc thù tại Brazil: ưu tiên thanh toán trả góp (installments) qua thẻ tín dụng.
+- **Biến phân tích:** `payment_type` — dữ liệu định tính danh nghĩa (Nominal Categorical Data).
+- **Lý do chọn Donut Chart (TDTU Chapter 2):** Thể hiện tỷ trọng phần trăm trên tổng thể (part-of-whole) giữa các phương thức thanh toán. Donut Chart trực quan và dễ theo dõi hơn Bar Chart khi số nhóm ít (4 loại chính).
+- **Nhận xét chính:**
+  - **Credit Card (Thẻ tín dụng)** chiếm vị thế thống trị với **73.9%** tổng số giao dịch.
+  - **Boleto (Phương thức chuyển khoản qua mã vạch Brazil)** đứng thứ 2 với **19.0%**.
+  - Voucher (5.4%) và Debit Card (1.5%) chiếm tỷ lệ nhỏ.
+  - Phản ánh thói quen tiêu dùng đặc thù tại Brazil: ưu tiên thanh toán trả góp (installments) qua thẻ tín dụng.
 
-![Tỷ trọng Phương thức Thanh toán](payment_methods_donut.png)
+![Tỷ trọng Phương thức Thanh toán](assets/payment_methods_donut.png)
 
 ---
 
 ### 7. PHÂN TÍCH THỜI GIAN GIAO HÀNG TRỄ THEO REVIEW SCORE (DELIVERY DELAY VS REVIEWS)
 
-* **Biến phân tích:** `delivery_delay_days` (định lượng liên tục) phân theo `review_score` (1-5 sao, định tính thứ bậc).
-* **Lý do chọn Violin Plot (TDTU Chapter 2):** Kết hợp khả năng biểu diễn bộ 5 số của Boxplot và hình dạng phân bố mật độ (KDE) của Histogram. Cho phép so sánh mức độ phân tán và xu hướng trung tâm của biến độ trễ giao hàng trên 5 mức đánh giá review.
+- **Biến phân tích:** `delivery_delay_days` (định lượng liên tục) phân theo `review_score` (1-5 sao, định tính thứ bậc).
+- **Lý do chọn Violin Plot (TDTU Chapter 2):** Kết hợp khả năng biểu diễn bộ 5 số của Boxplot và hình dạng phân bố mật độ (KDE) của Histogram. Cho phép so sánh mức độ phân tán và xu hướng trung tâm của biến độ trễ giao hàng trên 5 mức đánh giá review.
 
 #### Thuyết minh Lý thuyết & Quy trình Tính toán Moment của Độ trễ Giao hàng (`delivery_delay_days`):
+
 1. **Số liệu Quần thể:** $N = 92,077$ đơn hàng giao thành công; Thời gian giao trễ trung bình $\bar{x} = -12.27$ ngày (trung bình giao sớm 12.27 ngày so với ngày dự kiến).
 2. **Tính Mẫu phương sai (Moment bậc 2 $m_2$):** $m_2 = \frac{1}{N} \sum_{i=1}^N (x_i - \bar{x})^2 = 74.37$.
 3. **Tính Moment bậc 3 ($m_3$):** $m_3 = \frac{1}{N} \sum_{i=1}^N (x_i - \bar{x})^3 = -195.04$.
@@ -188,37 +200,37 @@ Trong tổng số 3,060 khoảng cách giữa các đơn hàng mua lặp lại, 
    $$K^2 = Z_1(S_k)^2 + Z_2(Kurt)^2 = (-42.6097)^2 + (95.8240)^2 = 1,815.59 + 9,182.24 = 9,778.37$$
    $$p\text{-value} = P(\chi^2_2 \ge 9,778.37) = 0.0000 < 0.001 \Rightarrow \text{Bác bỏ phân bố chuẩn } (\alpha = 0.05)$$
 
-* **Nhận xét chính:**
-  * Khách hàng cho **1 sao** có phân bố độ trễ giao hàng lệch hẳn sang vùng số dương (giao hàng trễ nhiều ngày).
-  * Khách hàng cho **4-5 sao** có phân bố tập trung ở vùng số âm (giao hàng sớm hơn ngày dự kiến).
-  * Cho thấy thời gian giao hàng là yếu tố ảnh hưởng trực tiếp tới mức độ hài lòng của khách hàng.
+- **Nhận xét chính:**
+  - Khách hàng cho **1 sao** có phân bố độ trễ giao hàng lệch hẳn sang vùng số dương (giao hàng trễ nhiều ngày).
+  - Khách hàng cho **4-5 sao** có phân bố tập trung ở vùng số âm (giao hàng sớm hơn ngày dự kiến).
+  - Cho thấy thời gian giao hàng là yếu tố ảnh hưởng trực tiếp tới mức độ hài lòng của khách hàng.
 
-![Phân bố Độ trễ Giao hàng theo Review Score](delivery_delay_vs_review.png)
+![Phân bố Độ trễ Giao hàng theo Review Score](assets/delivery_delay_vs_review.png)
 
 ---
 
 ### 8. PHÂN TÍCH CHUỖI THỜI GIAN DOANH THU HÀNG THÁNG (TIME SERIES TREND)
 
-* **Biến phân tích:** Doanh thu tổng hợp theo tháng từ 01/2017 đến 08/2018.
-* **Lý do chọn Line Chart (TDTU Chapter 2):** Biểu diễn dữ liệu chuỗi thời gian liên tục. Giúp theo dõi xu hướng tăng trưởng (Trend) và nhận diện các điểm gãy xu hướng (Inflection Points).
-* **Nhận xét chính:**
-  * **Doanh thu trung bình tháng H1 (trước 11/2017):** **R\$ 275,811.56 / tháng**.
-  * **Doanh thu trung bình tháng H2 (từ 11/2017):** **R\$ 848,964.25 / tháng**.
-  * **Tỷ lệ tăng trưởng H1 $\rightarrow$ H2:** **+207.81%** (Tăng trưởng bùng nổ bắt đầu từ đợt Black Friday 11/2017 và duy trì ở mức cao trong năm 2018).
+- **Biến phân tích:** Doanh thu tổng hợp theo tháng từ 01/2017 đến 08/2018.
+- **Lý do chọn Line Chart (TDTU Chapter 2):** Biểu diễn dữ liệu chuỗi thời gian liên tục. Giúp theo dõi xu hướng tăng trưởng (Trend) và nhận diện các điểm gãy xu hướng (Inflection Points).
+- **Nhận xét chính:**
+  - **Doanh thu trung bình tháng H1 (trước 11/2017):** **R\$ 275,811.56 / tháng**.
+  - **Doanh thu trung bình tháng H2 (từ 11/2017):** **R\$ 848,964.25 / tháng**.
+  - **Tỷ lệ tăng trưởng H1 $\rightarrow$ H2:** **+207.81%** (Tăng trưởng bùng nổ bắt đầu từ đợt Black Friday 11/2017 và duy trì ở mức cao trong năm 2018).
 
-![Xu hướng Doanh thu Hàng tháng](monthly_revenue_trend.png)
+![Xu hướng Doanh thu Hàng tháng](assets/monthly_revenue_trend.png)
 
 ---
 
 ### 9. THUYẾT MINH QUY TẮC LỰA CHỌN BIỂU ĐỒ (TDTU CHAPTER 2)
 
-| # | Biểu đồ | Loại dữ liệu | Lý do lựa chọn theo Lý thuyết TDTU Chapter 2 |
-| :---: | :--- | :--- | :--- |
-| 1 | **Donut Chart** (Tỷ lệ Quần thể) | Proportion (Tỷ lệ phần trăm) | Trực quan hóa tỷ lệ phần trăm đóng góp trên tổng thể giữa 2-3 nhóm (One-time vs Repeat, Churn vs Active) |
-| 2 | **Histogram + KDE** (AOV Chi tiêu) | Quantitative Continuous | Trực quan hóa hình dạng phân bố (Distribution Shape), xác định Skewness ($S_k = 9.32$) và vị trí Mean vs Median |
-| 3 | **Boxplot** (AOV Chi tiêu) | Quantitative Continuous | Biểu diễn Bộ 5 số ($Min, Q_1, Median, Q_3, Max$) và phát hiện các ngoại lệ chi tiêu cực trị (Outliers) |
-| 4 | **Histogram kép + KDE** (Chu kỳ mua lại) | Quantitative Continuous | So sánh phân bố trước và sau khi lọc nhiễu đơn cùng phiên, đánh dấu vị trí $Median$, $Q_3$ và mốc Churn 90 ngày |
-| 5 | **Horizontal Bar Chart** (Top 10 Ngành hàng) | Nominal Categorical | Xếp hạng giảm dần dữ liệu danh mục không thứ tự; dạng ngang giúp hiển thị rõ nhãn tên ngành hàng dài |
-| 6 | **Donut Chart** (Phương thức thanh toán) | Nominal Categorical | Thể hiện cơ cấu tỷ trọng (Part-of-whole) của 4 loại thanh toán chính trên tổng số giao dịch |
-| 7 | **Violin Plot** (Giao trễ vs Review Score) | Continuous vs Ordinal Categorical | So sánh bộ 5 số và dạng phân bố mật độ của biến liên tục (ngày trễ) trên từng mức điểm đánh giá (1-5 sao) |
-| 8 | **Line Chart** (Doanh thu theo Tháng) | Time Series Continuous | Biểu diễn diễn biến liên tục theo thời gian, theo dõi xu hướng tăng trưởng và nhận diện điểm gãy (Inflection Point tại 11/2017) |
+|  #  | Biểu đồ                                      | Loại dữ liệu                      | Lý do lựa chọn theo Lý thuyết TDTU Chapter 2                                                                                    |
+| :-: | :------------------------------------------- | :-------------------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
+|  1  | **Donut Chart** (Tỷ lệ Quần thể)             | Proportion (Tỷ lệ phần trăm)      | Trực quan hóa tỷ lệ phần trăm đóng góp trên tổng thể giữa 2-3 nhóm (One-time vs Repeat, Churn vs Active)                        |
+|  2  | **Histogram + KDE** (AOV Chi tiêu)           | Quantitative Continuous           | Trực quan hóa hình dạng phân bố (Distribution Shape), xác định Skewness ($S_k = 9.32$) và vị trí Mean vs Median                 |
+|  3  | **Boxplot** (AOV Chi tiêu)                   | Quantitative Continuous           | Biểu diễn Bộ 5 số ($Min, Q_1, Median, Q_3, Max$) và phát hiện các ngoại lệ chi tiêu cực trị (Outliers)                          |
+|  4  | **Histogram kép + KDE** (Chu kỳ mua lại)     | Quantitative Continuous           | So sánh phân bố trước và sau khi lọc nhiễu đơn cùng phiên, đánh dấu vị trí $Median$, $Q_3$ và mốc Churn 90 ngày                 |
+|  5  | **Horizontal Bar Chart** (Top 10 Ngành hàng) | Nominal Categorical               | Xếp hạng giảm dần dữ liệu danh mục không thứ tự; dạng ngang giúp hiển thị rõ nhãn tên ngành hàng dài                            |
+|  6  | **Donut Chart** (Phương thức thanh toán)     | Nominal Categorical               | Thể hiện cơ cấu tỷ trọng (Part-of-whole) của 4 loại thanh toán chính trên tổng số giao dịch                                     |
+|  7  | **Violin Plot** (Giao trễ vs Review Score)   | Continuous vs Ordinal Categorical | So sánh bộ 5 số và dạng phân bố mật độ của biến liên tục (ngày trễ) trên từng mức điểm đánh giá (1-5 sao)                       |
+|  8  | **Line Chart** (Doanh thu theo Tháng)        | Time Series Continuous            | Biểu diễn diễn biến liên tục theo thời gian, theo dõi xu hướng tăng trưởng và nhận diện điểm gãy (Inflection Point tại 11/2017) |
