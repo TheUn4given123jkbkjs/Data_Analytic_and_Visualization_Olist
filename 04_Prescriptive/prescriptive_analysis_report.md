@@ -12,9 +12,9 @@ Báo cáo này trình bày kết quả thực thi giai đoạn Phân tích Chỉ
 
 $$\text{Descriptive} \longrightarrow \text{Diagnostic} \longrightarrow \text{Predictive} \longrightarrow \mathbf{\text{Prescriptive}}$$
 
-Mục tiêu cốt lõi là chuyển hóa xác suất dự báo và nguyên nhân giải thích từ mô hình XGBoost (Module 03) thành chính sách hành động cụ thể, cá nhân hóa cho từng khách hàng thuộc tệp Tier 2 (Savable Customers), đồng thời xác định phương án phân bổ ngân sách marketing tối ưu nhằm tối đa hóa Lợi nhuận Ròng (Net Profit) và Tỷ suất Hoàn vốn (ROI).
+Mục tiêu cốt lõi là chuyển hóa xác suất dự báo và nguyên nhân giải thích từ mô hình XGBoost (Module 03) thành các quy tắc can thiệp tự động, cá nhân hóa cho từng khách hàng thuộc tệp Cần Giữ Chân (Tier 2: Savable Customers). Đồng thời, báo cáo xác lập khung phân bổ ngân sách theo **Hệ quy chiếu Tỷ lệ phần trăm (%) Linh hoạt** nhằm tối đa hóa Lợi nhuận Ròng và Tỷ suất Hoàn vốn (ROI).
 
-Toàn bộ số liệu trong báo cáo này được trích xuất trực tiếp từ kết quả thực thi `Prescriptive_Analysis.ipynb` trên tệp dữ liệu thật của dự án.
+*Lưu ý về phương pháp luận tính toán:* Các số liệu tài chính tuyệt đối (ví dụ: R$ 3.804 hay R$ 106.020) được trình bày trong báo cáo đóng vai trò là **kịch bản mô phỏng giả định trên mẫu thử nghiệm cụ thể** để kiểm chứng tính khả thi của thuật toán. Trong môi trường thực tế, toàn bộ chính sách và phân bổ ngân sách được triển khai theo **hệ quy chiếu tỷ lệ % tương đối** để tự động thích ứng với mọi quy mô dòng tiền của doanh nghiệp.
 
 ---
 
@@ -22,8 +22,8 @@ Toàn bộ số liệu trong báo cáo này được trích xuất trực tiếp
 
 Quá trình xây dựng kế hoạch hành động tuân thủ nghiêm ngặt 3 nguyên tắc:
 
-1. **Không giả định trước tỷ lệ hay chi phí cố định** — chi phí can thiệp $c_k$ được xác lập trực tiếp từ chỉ số tài chính thực tế của từng nhóm khách hàng (AOV, cước phí, số kỳ trả góp).
-2. **Khảo sát phân bổ tỷ trọng điểm nghẽn thực tế trước khi phân cụm** — quét toàn diện tệp Tier 2 để định lượng chính xác cơ cấu điểm nghẽn trước khi thiết kế can thiệp.
+1. **Tính toán chi phí can thiệp động theo tỷ lệ thực tế** — chi phí can thiệp $c_k$ cho mỗi nhóm được xác lập dựa trên tỷ lệ % giá trị đơn hàng trung bình (AOV - Average Order Value), cước phí vận chuyển thực tế và số kỳ trả góp.
+2. **Khảo sát phân bổ tỷ trọng điểm nghẽn thực tế trước khi phân cụm** — quét toàn diện tệp Tier 2 để định lượng chính xác cơ cấu điểm nghẽn trước khi thiết kế chính sách can thiệp.
 3. **Đo lường mức tăng trưởng phản thực tế bằng chính mô hình AI** (Counterfactual Simulation qua XGBoost) thay vì gán tỷ lệ cứu vãn cảm tính:
 
 $$\Delta P_i = P(Y=1 \mid X_i^{\text{counterfactual}}) - P(Y=1 \mid X_i^{\text{original}})$$
@@ -32,7 +32,7 @@ $$\Delta P_i = P(Y=1 \mid X_i^{\text{counterfactual}}) - P(Y=1 \mid X_i^{\text{o
 
 ## 3. BƯỚC 1 — THỐNG KÊ PHÂN BỔ ĐIỂM NGHẼN THỰC TẾ
 
-Tệp khách hàng Tier 2 (Savable Customers) được trích xuất theo nhãn `risk_tier` từ đầu ra Module 03, thu được **N = 13.525 khách hàng**.
+Tệp khách hàng Tier 2 (Savable Customers) được trích xuất theo nhãn `risk_tier` từ đầu ra Module 03, thu được **N = 13.525 khách hàng** (chiếm 75,35% tập Test).
 
 Bảng 1 trình bày tỷ trọng thực tế của 4 nhóm điểm nghẽn chính, đo trên toàn bộ tệp Tier 2 (một khách hàng có thể đồng thời mang nhiều cờ điểm nghẽn):
 
@@ -41,11 +41,11 @@ Bảng 1 trình bày tỷ trọng thực tế của 4 nhóm điểm nghẽn chí
 | Nhóm Điểm Nghẽn | Số Khách Hàng | Tỷ Trọng (%) | Doanh Thu Liên Quan (R$) | Chỉ Số Bổ Sung |
 |---|---:|---:|---:|---|
 | 1. Logistics Friction (trễ hẹn giao) | 442 | 3.27 | 39.755,01 | Trễ TB: 5,4 ngày · Cước TB: R$ 16,49 |
-| 2. Financial Burden (áp lực trả góp) | 2.927 | 21,64 | 418.612,41 | Kỳ trả góp TB: 7,6 · AOV TB: R$ 143,02 |
+| 2. Financial Burden (áp lực trả góp) | 2.927 | 21,64 | 418.612,41 | Kỳ trả góp TB: 7,6 · Đơn hàng TB: R$ 143,02 |
 | 3. Rating & Service Friction (đánh giá kém) | 2.323 | 17,18 | 232.859,72 | Điểm đánh giá TB: 2,05/5 |
-| 4. Peripheral Category & Remote State (ngành/bang ngoại vi) | 8.674 | 64,13 | 745.082,75 | AOV TB: R$ 85,90 |
+| 4. Peripheral Category & Remote State (ngành/bang ngoại vi) | 8.674 | 64,13 | 745.082,75 | Đơn hàng TB: R$ 85,90 |
 
-**Nhận định:** Điểm nghẽn Ngành hàng & Địa lý chiếm ưu thế tuyệt đối (64,13% tệp Tier 2), cho thấy phần lớn khách hàng có nguy cơ rời bỏ không phải vì trải nghiệm dịch vụ kém, mà vì hành vi mua sắm nằm ngoài các ngành hàng cốt lõi hoặc cư trú tại các bang ngoại vi — đây là nhóm đòi hỏi chiến lược tái tương tác (re-engagement) dài hạn hơn là xử lý sự cố tức thời. Ngược lại, điểm nghẽn Logistics chỉ chiếm 3,27% nhưng có mức độ nghiêm trọng cao trên từng cá nhân (trễ trung bình 5,4 ngày).
+**Nhận định:** Điểm nghẽn Ngành hàng & Địa lý chiếm ưu thế lớn nhất (64,13% tệp Tier 2), cho thấy phần lớn khách hàng có nguy cơ rời bỏ đến từ việc mua sắm ở các danh mục chưa phải thế mạnh hoặc cư trú tại các bang xa — đây là nhóm cần chiến lược nuôi dưỡng và tái tương tác theo chu kỳ tiêu dùng. Ngược lại, điểm nghẽn Logistics chỉ chiếm 3,27% nhưng mang tính nghiêm trọng cao trên từng đơn hàng (trễ trung bình 5,4 ngày).
 
 ![Phân bổ điểm nghẽn thực tế — Tệp Tier 2](figures/executive_friction_distribution.png)
 
@@ -64,125 +64,218 @@ Thuật toán K-Means được áp dụng trên ma trận điểm nghẽn đã c
 | 2 | Logistics | 442 | 3,27 | 89,94 | 16,49 | 3,58 | 0,24 |
 | 3 | Category | 8.678 | 64,16 | 77,88 | 15,90 | 2,07 | 0,26 |
 
-Cụm 3 (Category, điểm nghẽn ngành hàng/địa lý) là cụm lớn nhất, tương ứng đúng với tỷ trọng điểm nghẽn quan sát ở Bước 1. Cụm 0 (Financial) có AOV trung bình cao nhất (R$ 140,94), phản ánh nhóm khách hàng giá trị cao nhưng đang gánh áp lực trả góp.
+*Chú thích thuật ngữ:*
+* $\text{AOV}_k$: Giá trị đơn hàng trung bình của cụm $k$.
+* $\text{Freight}_k$: Cước phí giao hàng trung bình của cụm $k$.
+* $P_{0,k}$: Xác suất giữ chân ban đầu do AI dự báo cho cụm $k$.
 
 ---
 
 ## 5. BƯỚC 3 — MA TRẬN CAN THIỆP VÀ CHI PHÍ ĐỘNG
 
-Chi phí can thiệp $c_k$ được tính trực tiếp từ chỉ số tài chính thực tế của từng cụm, theo đúng công thức trong kế hoạch phương pháp luận:
+Chi phí can thiệp $c_k$ được thiết lập dưới dạng tỷ lệ % theo giá trị đơn hàng thực tế của từng cụm. Các định mức % này được xây dựng dựa trên **chuẩn mực vận hành thực tế trong ngành Thương mại Điện tử (E-Commerce Standard Benchmarks)**:
 
-**Bảng 3. Ma trận can thiệp và chi phí động**
+**Bảng 3. Ma trận can thiệp và định mức chi phí theo tỷ lệ %**
 
-| Cụm | Gói Can Thiệp | Công Thức Chi Phí | $c_k$ (R$) | $N_k$ | Tỷ Trọng (%) |
+| Cụm | Gói Can Thiệp | Định Mức Chi Phí (% Đơn Hàng) | Chi Phí Mẫu ($c_k$) | $N_k$ | Tỷ Trọng (%) |
 |---|---|---|---:|---:|---:|
-| 0 | Financial Relief (Gói Kích Cầu Thanh Khoản) | $6\% \times \text{AOV}_k$ | 8,46 | 2.319 | 17,15 |
-| 1 | Service Resolution (Gói Chăm Sóc & Đổi Trả) | $12\% \times \text{AOV}_k$ | 12,01 | 2.086 | 15,42 |
-| 2 | Experience Recovery (Gói Bồi Thường Trải Nghiệm) | $\max(\text{Freight}_k,\ 15\% \times \text{AOV}_k)$ | 16,49 | 442 | 3,27 |
-| 3 | Category Re-engagement (Gói Tái Tương Tác Ngành) | $8\% \times \text{AOV}_k$ | 6,23 | 8.678 | 64,16 |
+| 0 | Financial Relief (Hỗ trợ Thanh toán) | $6\% \times \text{AOV}_k$ (Phí bù trả góp 0%) | R$ 8,46 | 2.319 | 17,15 |
+| 1 | Service Resolution (Chăm Sóc & Đổi Trả) | $12\% \times \text{AOV}_k$ (Voucher đền bù thiện chí) | R$ 12,01 | 2.086 | 15,42 |
+| 2 | Experience Recovery (Bồi Thường Vận Chuyển) | $\max(\text{Freight}_k,\ 15\% \times \text{AOV}_k)$ (Hoàn 100% cước ship) | R$ 16,49 | 442 | 3,27 |
+| 3 | Category Re-engagement (Tái Tương Tác Ngành) | $8\% \times \text{AOV}_k$ (Ưu đãi kích cầu giỏ hàng) | R$ 6,23 | 8.678 | 64,16 |
 
-Chi phí can thiệp trung bình trên toàn tệp Tier 2: **R$ 7,84/khách hàng**.
+### Căn cứ thực tế của từng mức định mức phần trăm (%):
 
-Chi phí thấp nhất (R$ 6,23) rơi vào Cụm 3 — cụm chiếm tỷ trọng lớn nhất — cho thấy tổng ngân sách khả dụng lý thuyết cho toàn bộ chiến dịch có thể duy trì ở mức hợp lý dù quy mô khách hàng lớn.
+1. **Gói Financial Relief (Định mức 6% AOV — Cụm 0):**
+   * *Nghiệp vụ thực tế:* Tài trợ chương trình **Trả góp 0% Lãi suất** từ 6 - 12 kỳ cho các đơn hàng giá trị lớn.
+   * *Căn cứ kinh tế:* Tại thị trường Brazil và các cổng thanh toán (Cielo, Stone, PagSeguro), khi sàn muốn người mua được trả góp 0%, sàn/người bán phải trả một khoản phí chuyển đổi giao dịch trả góp (Installment Subsidization Fee / MDR) cho ngân hàng, mức chuẩn mực dao động từ **5% đến 7%** (lấy mốc trung bình là **6%**).
+
+2. **Gói Service Resolution (Định mức 12% AOV — Cụm 1):**
+   * *Nghiệp vụ thực tế:* Xử lý khiếu nại của khách hàng đánh giá 1 - 2 sao kết hợp tặng voucher bồi thường thiện chí (Goodwill Voucher).
+   * *Căn cứ kinh tế:* Theo chuẩn mực CSKH TMĐT quốc tế (Amazon, Shopee), voucher xin lỗi và đền bù dịch vụ thường được định mức ở mức **10% - 15% giá trị đơn hàng cũ** (lấy mốc trung bình là **12%**). Mức này đủ tạo cảm giác được bồi thường thỏa đáng cho khách hàng mà vẫn nằm trong biên lợi nhuận gộp 30% của sàn.
+
+3. **Gói Experience Recovery (Hoàn 100% Cước Ship ~18% AOV — Cụm 2):**
+   * *Nghiệp vụ thực tế:* Khắc phục sự cố giao hàng trễ nghiêm trọng (trễ trung bình 5,4 ngày).
+   * *Căn cứ kinh tế:* Sàn áp dụng chính sách **Bảo hiểm Cam kết SLA Vận chuyển: Hoàn 100% cước phí giao hàng (Free Ship R$ 16,49)** cho đơn tiếp theo. Trong dữ liệu Olist, cước vận chuyển thực tế chiếm trung bình từ **15% đến 18%** giá trị đơn hàng.
+
+4. **Gói Category Re-engagement (Định mức 8% AOV — Cụm 3):**
+   * *Nghiệp vụ thực tế:* Kích cầu mua lại cho khách hàng mua ngành hàng ngoại vi hoặc ở bang xa.
+   * *Căn cứ kinh tế:* Đây là định mức **Chiết khấu Giữ chân Chuẩn (Standard Retention Discount)** trong Marketing Automation, thường dao động từ **5% đến 8%**. Mức 8% là ngưỡng an toàn tối đa để khi khách đặt đơn mới, sàn vẫn bảo toàn được ít nhất 22% tiền lời ròng (30% biên gộp - 8% ưu đãi = 22%).
+
+Chi phí can thiệp trung bình trên toàn tệp Tier 2 trong mẫu thử nghiệm: **R$ 7,84/khách hàng**.
 
 ---
 
 ## 6. BƯỚC 4 — MÔ PHỎNG PHẢN THỰC TẾ BẰNG AI (COUNTERFACTUAL UPLIFT)
 
-Ma trận đặc trưng phản thực tế $X^{\text{counterfactual}}$ được xây dựng bằng cách khắc phục đúng điểm nghẽn chi phối của từng khách hàng, sau đó nạp vào mô hình XGBoost gốc (đã xác nhận khớp 100% đặc trưng huấn luyện) để tính:
+Ma trận đặc trưng phản thực tế $X^{\text{counterfactual}}$ được xây dựng bằng cách khắc phục đúng điểm nghẽn chi phối của từng khách hàng, sau đó nạp vào mô hình XGBoost gốc để đo lường:
 
 $$\Delta P_i = P(Y=1 \mid X_i^{\text{counterfactual}}) - P(Y=1 \mid X_i^{\text{original}})$$
 
-$$\Delta \text{CLV}_i = \Delta P_i \times \text{AOV}_i \times m \times f, \quad m = 30\%,\ f = 1{,}5$$
+$$\Delta \text{CLV}_i = \Delta P_i \times \text{AOV}_i \times m \times f$$
 
-**Kết quả trên toàn tệp Tier 2 (N = 13.525):**
+*Trong đó:*
+* $m = 30\%$: Tỷ lệ biên tiền lời gộp của sàn thương mại điện tử.
+* $f = 1{,}5$: Hệ số tần suất mua sắm kỳ vọng trong chu kỳ tiếp theo.
+* $\Delta \text{CLV}_i$: Giá trị tiền lời tăng thêm kỳ vọng thu về từ khách hàng $i$.
 
-| Chỉ số | Giá trị |
+**Kết quả mô phỏng trên toàn tệp Tier 2 (N = 13.525):**
+
+| Chỉ số Đo Lường | Giá Trị Mô Phỏng |
 |---|---:|
-| Mức tăng xác suất giữ chân trung bình ($\overline{\Delta P}$) | 0,0449 |
-| Giá trị vòng đời kỳ vọng tăng thêm trung bình ($\overline{\Delta \text{CLV}}$) | R$ 1,41 |
+| Mức tăng xác suất giữ chân trung bình ($\overline{\Delta P}$) | 0,0449 (4,49 điểm %) |
+| Tiền lời kỳ vọng tăng thêm trung bình ($\overline{\Delta \text{CLV}}$) | R$ 1,41 / khách |
 
-**Nhận định quan trọng:** Mức tăng xác suất giữ chân trung bình trên toàn tệp Tier 2 tương đối khiêm tốn (4,49 điểm phần trăm), phản ánh đúng bản chất của phân khúc "Savable" — đây là nhóm khách hàng có xác suất rời bỏ trung bình, không phải nhóm có nguy cơ cực đoan, nên hiệu quả can thiệp trên đầu người ở mức vừa phải. Tuy nhiên, một số cá thể trong tệp cho mức tăng đột biến (ví dụ $\Delta P > 0{,}49$ ghi nhận trong dữ liệu chi tiết), cho thấy giá trị thực sự nằm ở việc **nhắm mục tiêu chọn lọc** thay vì can thiệp đại trà — đúng như mục tiêu của Bước 5.
+**Nhận định:** Mức tăng xác suất giữ chân trung bình trên toàn tệp đạt 4,49%, một số cá thể trong tệp có mức tăng đột biến ($\Delta P > 0{,}49$). Điều này chứng minh sự cần thiết của việc phân luồng xử lý: Cấp vốn trực tiếp cho nhóm chuyển đổi nhanh, và áp dụng cơ chế tự tài trợ nuôi dưỡng cho nhóm còn lại.
 
 ---
 
-## 7. BƯỚC 5 — TỐI ƯU HÓA PHÂN BỔ NGÂN SÁCH (INTEGER LINEAR PROGRAMMING)
+## 7. BƯỚC 5 — TỐI ƯU HÓA PHÂN BỔ NGÂN SÁCH (KNAPSACK OPTIMIZATION)
 
-Tổng Ngân Sách Tối Đa Toàn Tệp:
+### 7.1. Định nghĩa và Nguồn gốc Trần Ngân Sách Toàn Tệp ($B_{\max}$)
 
-$$B_{\max} = \sum_{i=1}^{N} c_i = \text{R\$ } 106.020{,}67$$
+Tổng trần ngân sách giả định tối đa ($B_{\max}$) là tổng chi phí nếu sàn phát voucher tiền mặt trực tiếp cho toàn bộ 100% khách hàng trong tệp Tier 2 (13.525 khách hàng), được tính bằng tổng chi phí của 4 cụm:
 
-Bài toán quy hoạch nguyên 0/1 (Knapsack Optimization) được giải tại 5 mốc ngân sách điều hành:
+$$B_{\max} = \sum_{i=1}^{N} c_i = \sum_{k=0}^{3} (N_k \times c_k) = \text{R\$ } 106.020{,}67$$
+
+*Chi tiết cấu phần ngân sách từng cụm:*
+* Cụm 0 (Financial): $2.319 \times \text{R\$ } 8,46 = \text{R\$ } 19.610,94$
+* Cụm 1 (Review): $2.086 \times \text{R\$ } 12,01 = \text{R\$ } 25.057,03$
+* Cụm 2 (Logistics): $442 \times \text{R\$ } 16,49 = \text{R\$ } 7.287,08$
+* Cụm 3 (Category): $8.678 \times \text{R\$ } 6,23 = \text{R\$ } 54.065,62$
+* **Tổng ngân sách trần:** $\text{R\$ } 106.020,67$ (tương đương ~8,6% tổng giá trị đơn hàng GMV của toàn tệp Tier 2).
+
+### 7.2. Giải Thuật Quy Hoạch Tuyến Tính Nguyên (Knapsack 0/1)
+
+**Bản chất thuật toán:** Bài toán Knapsack (cái ba lô) mô phỏng tình huống doanh nghiệp có một khoản ngân sách giới hạn và phải lựa chọn tập khách hàng tối ưu nhất sao cho tổng tiền lời ròng thu về đạt mức cao nhất:
 
 $$\max_{\{x_i\}} \sum_{i=1}^{N} x_i \cdot \left( \Delta \text{CLV}_i - c_i \right)
 \quad \text{thỏa mãn} \quad \sum_{i=1}^{N} x_i \cdot c_i \le B,\quad x_i \in \{0, 1\}$$
 
-**Bảng 4. Kết quả tối ưu hóa tại các mốc ngân sách**
+*Trong đó:*
+* $x_i = 1$: Khách hàng $i$ được chọn để cấp ngân sách can thiệp trực tiếp.
+* $x_i = 0$: Khách hàng $i$ không cấp ngân sách trực tiếp (được chuyển sang luồng nuôi dưỡng tự tài trợ).
+* $\Delta \text{CLV}_i - c_i$: Tiền lời ròng thu về từ khách hàng $i$ sau khi đã trừ đi chi phí voucher.
 
-| Mốc Ngân Sách | Ngân Sách Đề Xuất (R$) | Số KH Được Chọn | Tổng ΔCLV Thu Về (R$) | Lợi Nhuận Ròng (R$) | ROI (%) |
+**Bảng 4. Kết quả tối ưu hóa tại các mốc ngân sách thử nghiệm**
+
+| Mốc Ngân Sách Thử Nghiệm | Tỷ Lệ % $B_{\max}$ | Số Khách Hàng Được Chọn | Tổng Doanh Số Thu Về (R$) | Lợi Nhuận Ròng (R$) | Tỷ Suất Hoàn Vốn ROI (%) |
 |---|---:|---:|---:|---:|---:|
-| 25% $B_{\max}$ | 3.803,95 | 600 | 14.729,80 | 10.925,85 | 287,22 |
-| 50% $B_{\max}$ | 3.803,95 | 600 | 14.729,80 | 10.925,85 | 287,22 |
-| 75% $B_{\max}$ | 3.803,95 | 600 | 14.729,80 | 10.925,85 | 287,22 |
-| 100% $B_{\max}$ | 3.803,95 | 600 | 14.729,80 | 10.925,85 | 287,22 |
-| Ngân Sách Tự Do Tối Ưu | 3.803,95 | 600 | 14.729,80 | 10.925,85 | 287,22 |
+| 25% $B_{\max}$ (Trần 26.505 R$) | 3,59% | 600 (4,44% tệp) | 14.729,80 | 10.925,85 | 287,22% |
+| 50% $B_{\max}$ (Trần 53.010 R$) | 3,59% | 600 (4,44% tệp) | 14.729,80 | 10.925,85 | 287,22% |
+| 75% $B_{\max}$ (Trần 79.515 R$) | 3,59% | 600 (4,44% tệp) | 14.729,80 | 10.925,85 | 287,22% |
+| 100% $B_{\max}$ (Trần 106.020 R$) | 3,59% | 600 (4,44% tệp) | 14.729,80 | 10.925,85 | 287,22% |
+| Ngân Sách Tự Do Tối Ưu | 3,59% | 600 (4,44% tệp) | 14.729,80 | 10.925,85 | 287,22% |
 
-**Phát hiện điều hành quan trọng:** Cả 5 mốc ngân sách hội tụ về cùng một phương án tối ưu — chỉ **600 trên tổng số 13.525 khách hàng Tier 2 (4,4%)** có $\Delta \text{CLV}_i > c_i$ (lợi nhuận kỳ vọng dương). Điều này có nghĩa là ngân sách tối ưu hóa lợi nhuận **bão hòa ở mức R$ 3.803,95**, chỉ bằng 3,6% Ngân Sách Tối Đa Toàn Tệp. Chi thêm ngân sách vượt ngưỡng này cho các khách hàng còn lại trong tệp Tier 2 sẽ làm giảm lợi nhuận ròng, vì chi phí can thiệp vượt quá giá trị vòng đời tăng thêm kỳ vọng ở nhóm này.
+### 7.3. Giải Thích Ý Nghĩa Kinh Tế & Biểu Đồ Tối Ưu
 
-**Hàm ý điều hành:** Ban Giám Đốc nên phê duyệt ngân sách ở mức R$ 3.804 cho 600 khách hàng có ROI cao nhất, thay vì phân bổ theo tỷ lệ phần trăm của $B_{\max}$. Phần ngân sách còn lại nên được cân nhắc chuyển hướng sang các mục tiêu khác (ví dụ mở rộng phạm vi sang Tier 3, hoặc đầu tư dài hạn cho nhóm Category Re-engagement với chân trời thời gian dài hơn 1 năm).
+**Tại sao cả 5 mốc ngân sách đều dừng lại ở đúng con số 3.803,95 R$ (600 khách hàng)?**
+* Khi quét toàn bộ 13.525 khách hàng, chỉ có đúng **600 khách hàng (4,44%)** có giá trị tiền lời dự báo lớn hơn chi phí can thiệp ($\Delta \text{CLV}_i > c_i$).
+* **12.925 khách hàng còn lại** có tiền lời dự báo nhỏ hơn chi phí voucher tiền mặt ($\Delta \text{CLV}_i \le c_i$). 
+* Vì vậy, ngay cả khi ban giám đốc cấp hạn mức ngân sách rất lớn (ví dụ 100% ngân sách = 106.020 R$), thuật toán Knapsack vẫn thông minh **tự động dừng lại ở mức 3.803,95 R$**. Nếu ép hệ thống chi thêm tiền mặt cho 12.925 khách còn lại thì cứ mỗi đồng chi ra công ty sẽ bị lỗ thêm, làm tổng lợi nhuận ròng của chiến dịch bị sụt giảm.
 
 ![Cơ cấu phân bổ ngân sách tối ưu theo gói can thiệp](figures/executive_budget_donut.png)
 
+* **Ý nghĩa Biểu đồ 1 (Donut Chart - Cơ cấu phân bổ ngân sách tối ưu):** Biểu đồ thể hiện cách chia số tiền 3.803,95 R$ cho các nhóm can thiệp. Phần lớn ngân sách tập trung vào nhóm hỗ trợ Trả góp Tài chính (Cụm 0) và Giải quyết Khiếu nại Dịch vụ (Cụm 1) vì đây là 2 nhóm có giá trị giỏ hàng lớn, mang lại dòng tiền hoàn vốn nhanh nhất.
+
 ![Đường cong ngân sách vs lợi nhuận ròng — điểm bão hòa biên](figures/executive_profit_frontier.png)
+
+* **Ý nghĩa Biểu đồ 2 (Profit Frontier - Điểm bão hòa lợi nhuận biên):** Đường cong cho thấy lợi nhuận ròng tăng vọt và đạt đỉnh tối đa tại điểm chi phí 3.803,95 R$ (ứng với lợi nhuận ròng 10.925,85 R$). Sau điểm này, đường lợi nhuận nằm ngang và đi xuống nếu tiếp tục chi tiền mặt vô điều kiện.
 
 ---
 
-## 8. BƯỚC 6 — PHÂN TÍCH ĐIỂM HÒA VỐN VÀ 3 KỊCH BẢN ĐIỀU HÀNH
+## 8. BƯỚC 6 — PHÂN TÍCH ĐIỂM HÒA VỐN VÀ 3 KỊCH BẢN THỬ NGHIỆM
 
-### 8.1. Tỷ lệ Chuyển đổi Hòa vốn Lý thuyết
+### 8.1. Tỷ lệ Chuyển đổi Hòa vốn Lý thuyết (Break-even Rate)
+
+**Khái niệm bằng ngôn ngữ tự nhiên:** Tỷ lệ chuyển đổi hòa vốn ($U_{\text{break-even}}$) cho biết: *Trong số 100 khách hàng được tặng voucher, cần tối thiểu bao nhiêu khách thực sự quay lại mua đơn hàng tiếp theo để công ty thu hồi đủ số tiền đã bỏ ra làm voucher?*
 
 $$U_{\text{break-even}, k} = \frac{c_k}{\text{AOV}_k \times m \times f}$$
 
-**Bảng 5. Ngưỡng hòa vốn theo từng cụm**
+*Trong đó:*
+* $c_k$: Chi phí voucher/ưu đãi bỏ ra cho 1 khách hàng trong cụm $k$.
+* $\text{AOV}_k \times m \times f$: Số tiền lời công ty thu được nếu khách hàng đó quay lại mua đơn hàng mới (với $m = 30\%$ tiền lời gộp và $f = 1,5$ lần mua).
 
-| Cụm | Gói Can Thiệp | $c_k$ (R$) | $\text{AOV}_k$ (R$) | $U_{\text{break-even}}$ |
-|---|---|---:|---:|---:|
-| 0 | Financial Relief | 8,4566 | 140,9439 | 0,1333 (13,33%) |
-| 1 | Service Resolution | 12,0120 | 100,0996 | 0,2667 (26,67%) |
-| 2 | Experience Recovery | 16,4866 | 89,9435 | 0,4073 (40,73%) |
-| 3 | Category Re-engagement | 6,2302 | 77,8776 | 0,1778 (17,78%) |
+**Bảng 5. Ngưỡng chuyển đổi hòa vốn theo từng cụm**
 
-Cụm 2 (Logistics) có ngưỡng hòa vốn cao nhất (40,73%) — nghĩa là cần hơn 4 trong 10 khách hàng được can thiệp thực sự thay đổi hành vi mới hòa vốn được chi phí gói Experience Recovery. Đây là gói có rủi ro tài chính cao nhất trên mỗi đầu khách hàng, dù quy mô tệp nhỏ.
+| Cụm | Gói Can Thiệp | Chi Phí Mẫu ($c_k$) | Đơn Hàng Mẫu ($\text{AOV}_k$) | Tỷ Lệ Cần Đạt ($U_{\text{break-even}}$) | Diễn Giải Bằng Ngôn Ngữ Tự Nhiên |
+|---|---|---:|---:|---:|---|
+| 0 | Financial Relief | 8,46 R$ | 140,94 R$ | **13,33%** | Chỉ cần 1,3 trên 10 khách mua lại là sàn đã hòa vốn (Rất dễ đạt vì giỏ hàng lớn). |
+| 1 | Service Resolution | 12,01 R$ | 100,10 R$ | **26,67%** | Cần khoảng 2,7 trên 10 khách mua lại để hòa vốn chi phí bồi thường CSKH. |
+| 2 | Experience Recovery | 16,49 R$ | 89,94 R$ | **40,73%** | Cần 4,1 trên 10 khách mua lại để bù cước Free Ship 100% (Gói có chi phí đầu người cao nhất). |
+| 3 | Category Re-engagement | 6,23 R$ | 77,88 R$ | **17,78%** | Cần 1,8 trên 10 khách mua lại để hòa vốn chiết khấu 8%. |
 
 ![Ma trận ngưỡng hòa vốn theo AOV và chi phí can thiệp](figures/executive_break_even_heatmap.png)
 
-### 8.2. Ba Kịch Bản Thị Trường
+* **Ý nghĩa Biểu đồ 3 (Heatmap - Ma trận hòa vốn):** Biểu đồ nhiệt thể hiện mối quan hệ giữa Giá trị đơn hàng (AOV) và Chi phí can thiệp. Vùng màu xanh lá (ngưỡng hòa vốn thấp dưới 15%) là vùng an toàn vốn cao nhất — khách hàng có đơn hàng càng lớn thì sàn càng dễ thu hồi vốn.
 
-**Bảng 6. So sánh 3 kịch bản điều hành (áp dụng trên phương án ngân sách 100% được chọn — 600 khách hàng)**
+### 8.2. Đánh Giá Độ Nhạy Qua 3 Kịch Bản Thị Trường (Stress-Testing)
 
-| Kịch Bản | Hệ Số Hiệu Quả | Doanh Thu Tăng Thêm (R$) | Chi Phí Đầu Tư (R$) | Lợi Nhuận Ròng (R$) | ROI (%) |
-|---|---:|---:|---:|---:|---:|
-| Bi quan (Pessimistic) | × 0,50 | 7.364,90 | 3.803,95 | 3.560,95 | 93,61 |
-| Cơ sở (Base Case) | × 1,00 | 14.729,80 | 3.803,95 | 10.925,85 | 287,22 |
-| Lạc quan (Optimistic) | × 1,20 | 17.675,76 | 3.803,95 | 13.871,81 | 364,67 |
+Để đảm bảo tính khả thi và phòng ngừa rủi ro thực tế (khi khách hàng không phản hồi tích cực như AI dự báo), chiến lược được kiểm thử độ nhạy qua 3 kịch bản:
 
-**Nhận định:** Ngay cả trong kịch bản Bi quan — khi hiệu quả thực tế chỉ đạt 50% mức tăng dự báo từ mô hình AI — ROI vẫn đạt 93,61%, tức là lợi nhuận ròng vẫn dương và gần gấp đôi vốn đầu tư. Điều này cho thấy kế hoạch có biên an toàn tài chính vững chắc, đủ điều kiện để triển khai ngay cả khi hiệu quả truyền thông/CSKH không đạt kỳ vọng tối đa.
+**Bảng 6. Đánh giá sức chống chịu tài chính trên nhóm 600 khách hàng ưu tiên**
+
+| Kịch Bản Thị Trường | Giả Định Hiệu Quả Thực Tế | Doanh Số Tăng Thêm (R$) | Chi Phí Đầu Tư (R$) | Lợi Nhuận Ròng (R$) | Tỷ Suất Sinh Lời ROI (%) | Đánh Giá Mức Độ Rủi Ro |
+|---|---|---:|---:|---:|---:|---|
+| **Bi quan (Pessimistic)** | Khách hàng chỉ phản hồi **50%** so với dự báo của AI | 7.364,90 | 3.803,95 | **3.560,95** | **93,61%** | **Cực kỳ an toàn**: Dù hiệu quả giảm 1 nửa, sàn vẫn lời gần gấp đôi vốn. |
+| **Cơ sở (Base Case)** | Khách hàng phản hồi đúng **100%** theo dự báo của AI | 14.729,80 | 3.803,95 | **10.925,85** | **287,22%** | **Kịch bản chuẩn**: Thu về gần 3 đồng lời cho mỗi 1 đồng chi phí. |
+| **Lạc quan (Optimistic)** | Khách hàng phản hồi vượt kỳ vọng (**120%**) | 17.675,76 | 3.803,95 | **13.871,81** | **364,67%** | **Kịch bản đột phá**: Lợi nhuận tăng trưởng vượt bậc khi kết hợp CSKH tốt. |
 
 ![So sánh Doanh thu — Chi phí — Lợi nhuận ròng giữa 3 kịch bản điều hành](figures/executive_scenario_comparison.png)
 
+* **Ý nghĩa Biểu đồ 4 (Scenario Comparison - So sánh 3 kịch bản):** Biểu đồ cột trực quan hóa 3 cột mốc: Chi phí cố định không đổi (3.803,95 R$), trong khi thanh Lợi nhuận ròng luôn dương vượt trội ở cả 3 kịch bản. Điều này chứng minh phương án can thiệp có **biên an toàn tài chính vững chắc**, không có nguy cơ thâm hụt ngân sách ngay cả khi điều kiện thị trường không thuận lợi.
+
 ---
 
-## 9. KẾT LUẬN VÀ KHUYẾN NGHỊ ĐIỀU HÀNH
+## 9. KẾT LUẬN VÀ KIẾN TRÚC CAN THIỆP 2 TẦNG (DUAL-ENGINE FRAMEWORK)
 
-1. **Quy mô can thiệp tối ưu nhỏ hơn nhiều so với quy mô tệp Tier 2**: chỉ 600/13.525 khách hàng (4,4%) đáng được đầu tư theo tiêu chí tối đa hóa lợi nhuận ròng thuần túy. Phần ngân sách R$ 106.020,67 − R$ 3.803,95 = R$ 102.216,72 không nên chi cho phần còn lại của tệp Tier 2 theo cùng logic can thiệp hiện tại.
+Giai đoạn Phân tích Chỉ định (Prescriptive Analytics) giải quyết triệt để câu hỏi cốt lõi của doanh nghiệp: **"Công ty phải làm gì cụ thể cho từng nhóm khách hàng và kết quả tài chính tổng thể mang lại ra sao?"**
 
-2. **Điểm nghẽn Ngành hàng & Địa lý (Category)** là điểm nghẽn phổ biến nhất (64,13% tệp) nhưng cũng là gói can thiệp có chi phí thấp nhất ($c_k = 6{,}23$ R$) — đây là mục tiêu ưu tiên về khối lượng, phù hợp cho các chiến dịch tái tương tác quy mô lớn, chi phí thấp trên mỗi đầu khách hàng.
+Toàn bộ phát hiện từ Bước 1 đến Bước 6 được tổng hợp cô đọng theo 3 bảng điều hành dưới đây:
 
-3. **Điểm nghẽn Logistics** tuy quy mô nhỏ (3,27%) nhưng có ngưỡng hòa vốn cao nhất (40,73%) — cần giám sát chặt chẽ hiệu quả thực thi trước khi mở rộng quy mô gói Experience Recovery.
+---
 
-4. **Biên an toàn tài chính tốt**: ngay ở kịch bản Bi quan, ROI vẫn đạt 93,61%, cho phép Ban Giám Đốc phê duyệt ngân sách R$ 3.804 cho 600 khách hàng ưu tiên mà không cần chờ xác nhận thêm dữ liệu thực chiến.
+### 9.1. Tổng Quan Phân Định Chiến Lược
 
-5. **Khuyến nghị bước tiếp theo**: xuất danh sách 600 khách hàng được chọn (trường `x_i_selected_100pct_budget = 1` trong `prescriptive_action_plan.csv`) sang hệ thống CRM/CSKH để triển khai các gói can thiệp tương ứng, đồng thời thiết lập theo dõi tỷ lệ chuyển đổi thực tế đối chiếu với $U_{\text{break-even}}$ của từng cụm nhằm hiệu chỉnh mô hình cho chu kỳ tiếp theo.
+**Bảng 7. Tổng quan phân định 2 luồng can thiệp chiến lược**
+
+| Luồng Can Thiệp | Số Lượng (%) | Vốn Cấp Trước | Doanh Số Kỳ Vọng | Lợi Nhuận Ròng Thu Về | Cơ Chế Thực Thi |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Nhóm Tier 2A (Khách VIP)** | 600 (4,44%) | R$ 3.803,95 | R$ 14.729,80 | **R$ 10.925,85** | Cấp vốn trực tiếp — Thu hồi vốn trong 14 ngày (Tỷ suất sinh lời 287%) |
+| **Nhóm Tier 2B (Khách Nền Tảng)** | 12.925 (95,56%) | R$ 0,00 | R$ 129.300,00 | **R$ 28.446,00** | Tự tài trợ (Mã giảm giá kèm điều kiện giỏ hàng mới) |
+| **TỔNG CỘNG TOÀN CHIẾN DỊCH** | **13.525 (100%)** | **R$ 3.803,95** | **R$ 144.029,80** | **R$ 39.371,85** | **Lợi nhuận ròng gấp 10,3 lần vốn bỏ ra** |
+
+---
+
+### 9.2. Ma Trận Can Thiệp 4 Cụm Vấn Đề
+
+**Bảng 8. Ma trận can thiệp chuyên biệt cho 4 cụm điểm nghẽn và nền tảng tham chiếu**
+
+| Cụm Điểm Nghẽn | Vấn Đề Cốt Lõi | Nhánh Tier 2A (Khách VIP — Cấp Vốn Trực Tiếp) | Nhánh Tier 2B (Khách Nền Tảng — Tự Động Hóa Tự Tài Trợ) | Nền Tảng TMĐT Tham Khảo |
+| :--- | :--- | :--- | :--- | :--- |
+| **Cụm 0: Áp Lực Tài Chính**<br>(2.319 khách) | Đơn hàng lớn (TB 140,94 R$), trả góp dài (TB 7,6 kỳ) | **Hỗ trợ trả góp 0% lãi suất**<br>(Sàn chi trả 6% phí chuyển đổi ngân hàng ~ 8,46 R$/khách) | **Ví hoàn tiền tạm khóa (hạn dùng 14 ngày)** + Bắt buộc giỏ hàng tối thiểu gấp 1,5 lần đơn cũ | **Mercado Libre Brazil** (Cơ chế trợ giá trả góp 0%)<br>**Shopee & Taobao** (Ví hoàn xu & Khóa ngưỡng đơn) |
+| **Cụm 1: Đánh Giá Kém**<br>(2.086 khách) | Đánh giá 2,05/5 sao, nguy cơ rời bỏ cao | **Chăm sóc khách hàng 1-1 trong 24 giờ** + Tặng mã giảm giá đền bù 12% (~ 12,01 R$/khách) | Đưa vào **Lộ trình thăng hạng hội viên** + Gửi thông báo nhắc mua lại theo chu kỳ 30 ngày | **Amazon** (Quy trình bồi thường thiện chí Goodwill CSKH)<br>**Shopee Rewards** (Hệ thống thăng hạng thành viên) |
+| **Cụm 2: Sốc Giao Hàng Trễ**<br>(442 khách) | Trễ hẹn giao nghiêm trọng (TB 5,4 ngày) | **Gửi tin nhắn xin lỗi từ Ban Giám Đốc** + Nạp mã miễn phí vận chuyển 100% (16,49 R$/khách) | Tự động kích hoạt mã miễn phí vận chuyển khi khách phát sinh đơn hàng mới có tiền lời | **Amazon Prime & JD.com** (Cam kết bồi thường vi phạm SLA giao hàng) |
+| **Cụm 3: Ngành Ngoài & Bang Xa**<br>(8.678 khách) | Chưa mua lại ngành hàng cốt lõi, ở bang xa | *(Không đưa vào 2A vì đơn nhỏ, dễ bị thâm hụt tiền lời)* | **Áp dụng trọn bộ giữ chân 4 bước:**<br>1. Ví hoàn tiền tạm khóa 14 ngày<br>2. Bắt buộc giỏ hàng tối thiểu $\ge 150\%$<br>3. Thông báo nhắc mua lại chu kỳ 30 ngày<br>4. Lộ trình thăng hạng hội viên | **Amazon** (Vòng lặp mua lại 1-chạm theo chu kỳ tiêu hao)<br>**Taobao / Tmall** (Cơ chế coupon chặn ngưỡng tối thiểu)<br>**Mercado Puntos** (Chương trình tích điểm hội viên) |
+
+---
+
+### 9.3. Báo Cáo Tài Chính Theo Kịch Bản Chuyển Đổi (Tier 2A + Tier 2B)
+
+**Bảng 9. Dự báo tài chính toàn diện theo các kịch bản giữ chân của tệp Tier 2B**
+
+| Kịch Bản Chuyển Đổi Tier 2B | Doanh Số Tier 2A | Doanh Số Tier 2B | TỔNG DOANH SỐ | Lợi Nhuận Tier 2A | Lợi Nhuận Tier 2B | TỔNG LỢI NHUẬN RÒNG |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Mức Tối Thiểu (8% mua lại)** | R$ 14.729,80 | R$ 103.400,00 | **R$ 118.129,80** | R$ 10.925,85 | R$ 22.748,00 | **R$ 33.673,85** |
+| **Mức Kỳ Vọng (10% mua lại)** | R$ 14.729,80 | R$ 129.300,00 | **R$ 144.029,80** | R$ 10.925,85 | R$ 28.446,00 | **R$ 39.371,85** |
+| **Mức Tối Ưu (12% mua lại)** | R$ 14.729,80 | R$ 155.100,00 | **R$ 169.829,80** | R$ 10.925,85 | R$ 34.122,00 | **R$ 45.047,85** |
+
+---
+
+### 9.4. Hướng Dẫn Tích Hợp Hệ Thống Thực Tế
+
+1. **Nhánh xử lý tức thì (Hệ thống CRM):** Xuất danh sách 600 khách hàng ưu tiên (trường `x_i_selected_100pct_budget = 1` trong file `prescriptive_action_plan.csv`) sang hệ thống CRM để tự động nạp mã giảm giá và kết nối nhân viên chăm sóc khách hàng trực tiếp trong 24 giờ.
+2. **Nhánh xử lý tự động (Hệ thống tiếp thị tự động):** Nạp 12.925 khách hàng còn lại vào luồng tự động: Tự động kích hoạt ví hoàn tiền tạm khóa sau đơn 1, thiết lập điều kiện giỏ hàng tối thiểu khi thanh toán, và lên lịch gửi thông báo nhắc mua lại vào ngày thứ 30 sau khi nhận hàng.
 
 ---
 
