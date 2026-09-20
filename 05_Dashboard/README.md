@@ -20,7 +20,7 @@ dashboard/
 ```bash
 cd dashboard
 pip install -r requirements.txt
-streamlit run app.py 05_Dashboard\app.py
+streamlit run 05_Dashboard\app.py
 ```
 
 ## Trạng thái hiện tại (3 tab)
