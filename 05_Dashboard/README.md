@@ -1,90 +1,51 @@
-# DASHBOARD INTEGRATION API REFERENCE
+# Olist Churn Dashboard
 
-Tài liệu API và hướng dẫn cài đặt các module hỗ trợ tích hợp mô hình vào Dashboard.
+Dashboard Streamlit cho đề tài **Dự đoán rời bỏ khách hàng (Churn) trên sàn TMĐT Olist**.
 
----
+## Cấu trúc thư mục
 
-## 1. Cài đặt Thư viện
+```
+dashboard/
+├── app.py                 # File chạy chính (streamlit run app.py)
+├── charts_config.py       # Khai báo metadata cho toàn bộ biểu đồ EDA (data-driven)
+├── requirements.txt
+├── assets/                # Ảnh biểu đồ hiện có (phần Mô tả dữ liệu)
+└── core/
+    ├── data_scaler.py     # Chuẩn hóa dữ liệu thành 33 đặc trưng chuẩn
+    └── model_helper.py    # Dự đoán, giải thích SHAP, đề xuất, mô phỏng ROI
+```
+
+## Cách chạy
+
 ```bash
-pip install streamlit xgboost shap joblib plotly scikit-learn
+cd dashboard
+pip install -r requirements.txt
+streamlit run app.py
 ```
 
----
+## Trạng thái hiện tại (3 tab)
 
-## 2. API: `data_scaler.py` (Chuẩn hóa dữ liệu nạp Model)
+| Tab | Nội dung | Trạng thái |
+|---|---|---|
+| 1. Mô tả Dữ liệu (EDA) | 9 biểu đồ, chia 4 nhóm chủ đề | ✅ Hoàn chỉnh |
+| 2. Phân tích Chẩn đoán | 12 biểu đồ, chia 6 "Yếu tố tác động churn" (giao trễ, phí ship, ngày trễ, review xấu, ngành hàng, vùng địa lý) + bảng tổng kết khuyến nghị đặc trưng cho mô hình | ✅ Hoàn chỉnh |
+| 3. Dự đoán Churn & Đề xuất | 7 biểu đồ mô hình (chuẩn bị dữ liệu, baseline, so sánh baseline vs advanced, SHAP) + form dự đoán tương tác wiring tới `core/model_helper.py` | ✅ Biểu đồ hoàn chỉnh · Form chạy được khi có đủ model artifacts |
 
-Chuyển đổi dữ liệu nhập thô thành **DataFrame 33 cột chuẩn 100%** để đưa vào `model.predict_proba()`.
+## Để Tab 3 (Dự đoán) chạy được đầy đủ
 
-### Signature:
-```python
-from data_scaler import prepare_input
+`core/model_helper.py` cần các file theo đường dẫn mặc định (tương đối so với `core/`):
 
-X = prepare_input(
-    order_spent=150.0,                  # float: Giá trị đơn hàng (BRL)
-    delivery_days=8.0,                  # float: Số ngày giao hàng thực tế
-    estimated_delivery_days=15.0,       # float: Số ngày giao hàng dự kiến
-    payment_type="credit_card",         # str: 'credit_card', 'boleto', 'voucher', 'debit_card'
-    customer_state="SP",                # str: 'SP', 'RJ', 'MG', 'Sul', 'outros'
-    product_category="beleza_saude",    # str: Tên danh mục sản phẩm
-    review_score=5,                     # int: 1 đến 5 sao
-    max_installments=3,                 # int: Số kỳ trả góp
-    scale=False                         # bool: True nếu muốn chuẩn hóa Z-score
-)
-# Hoặc truyền dict / DataFrame: X = prepare_input(raw_dict_or_df)
-```
+- `../03_Predictive/models/advanced/best_run/best_model.pkl`
+- `../03_Predictive/models/feature_columns.json`
+- `../03_Predictive/data/train_test/X_train.csv` (dùng để fit scaler nếu bật `scale=True`)
 
-### Returns:
-* `pandas.DataFrame`: Shape `(1, 33)`, đúng 33 cột theo `feature_columns.json`.
+Nếu artifacts model đặt ở nơi khác, sửa `model_dir` khi khởi tạo `OlistCustomerPredictor(model_dir=...)`
+trong `app.py`.
 
----
+## Yêu cầu về so sánh mô hình (baseline vs nâng cao)
 
-## 3. API: `model_helper.py` (Dự báo, Giải thích & ROI)
-
-### Khởi tạo:
-```python
-from model_helper import OlistCustomerPredictor
-
-predictor = OlistCustomerPredictor()  # Tự động nạp model và feature columns
-```
-
-### Method 1: `predictor.predict_and_prescribe(**kwargs)`
-Dự báo xác suất, phân tầng rủi ro, phân bổ tỷ trọng Pie Chart và đề xuất can thiệp.
-
-* **Input:** Nhận các tham số tương tự `prepare_input` ở trên.
-* **Returns:** `dict` chứa các trường sau:
-
-| Key | Kiểu | Ý nghĩa / Giá trị mẫu |
-| :--- | :--- | :--- |
-| `prob_retain` | `float` | Xác suất giữ chân ($0.0 \to 1.0$) |
-| `prob_retain_pct` | `str` | Chuỗi hiển thị (vd: `"21.86%"`) |
-| `risk_tier` | `str` | Tên tầng rủi ro (Tier 1, Tier 2, Tier 3) |
-| `tier_color` | `str` | Mã màu hex gợi ý cho UI (`#e63946`, `#f4a261`, `#2a9d8f`) |
-| `can_intervene` | `bool` | `True` nếu thuộc Tier 2 (Cần can thiệp Marketing) |
-| `pie_chart_data` | `DataFrame` | Cột `Nhóm Nguyên Nhân` & `Tỷ trọng (%)` để vẽ Pie Chart |
-| `action_title` | `str` | Tên gói can thiệp Marketing đề xuất |
-| `action_desc` | `str` | Mô tả chi tiết hành động |
-| `action_channel` | `str` | Kênh triển khai tiếp thị |
-
----
-
-### Method 2 (Static): `OlistCustomerPredictor.simulate_roi(...)`
-Bộ tính toán bài toán kinh tế và ROI tiếp thị.
-
-### Signature:
-```python
-roi = OlistCustomerPredictor.simulate_roi(
-    target_customers=4124,     # Quy mô tệp khách hàng Tier 2
-    cost_per_voucher=20.0,     # Chi phí voucher / tiếp thị mỗi khách (BRL)
-    expected_uplift_pct=20.0,  # Tỷ lệ cứu vãn thành công kỳ vọng (%)
-    avg_order_value=160.0,     # Giá trị đơn hàng trung bình (BRL)
-    net_margin_pct=30.0,       # Biên lợi nhuận ròng (%)
-    future_orders=1.5          # Số đơn mua thêm kỳ vọng trong 1 năm
-)
-```
-
-### Returns: `dict`
-* `total_cost`: Tổng ngân sách chiến dịch (BRL).
-* `retained_customers`: Số khách hàng giữ chân thành công.
-* `net_profit`: Lợi nhuận ròng thu về sau khi trừ chi phí (BRL).
-* `roi_pct`: Tỷ suất hoàn vốn ROI (%).
-* `is_profitable`: `True` nếu ROI > 0%.
+Phần này cần bổ sung khi có kết quả huấn luyện: nên hiển thị ít nhất 2 mô hình
+(ví dụ Logistic Regression làm baseline, và một mô hình cây/ensemble như
+XGBoost/LightGBM/Random Forest làm mô hình nâng cao), kèm bảng so sánh chỉ số
+(Accuracy, Precision, Recall, F1, AUC) và biểu đồ ROC/Confusion Matrix tương ứng —
+có thể thêm vào Tab 3 dưới dạng một `st.tabs(["Baseline", "Advanced", "So sánh"])` con.
