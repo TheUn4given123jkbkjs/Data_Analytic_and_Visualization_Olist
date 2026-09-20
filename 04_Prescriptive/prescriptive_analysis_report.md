@@ -15,7 +15,13 @@ $$\text{Descriptive} \longrightarrow \text{Diagnostic} \longrightarrow \text{Pre
 
 Mục tiêu cốt lõi là chuyển hóa xác suất dự báo và nguyên nhân giải thích từ mô hình XGBoost (Module 03) thành các quy tắc can thiệp tự động, cá nhân hóa cho từng khách hàng thuộc tệp Cần Giữ Chân (Tier 2: Savable Customers). Đồng thời, báo cáo xác lập khung phân bổ ngân sách theo **Hệ quy chiếu Tỷ lệ phần trăm (%) Linh hoạt** nhằm tối đa hóa Lợi nhuận Ròng và Tỷ suất Hoàn vốn (ROI).
 
-_Lưu ý về phương pháp luận tính toán:_ Các số liệu tài chính tuyệt đối (ví dụ: R$ 3.804 hay R$ 106.020) được trình bày trong báo cáo đóng vai trò là **kịch bản mô phỏng giả định trên mẫu thử nghiệm cụ thể** để kiểm chứng tính khả thi của thuật toán. Trong môi trường thực tế, toàn bộ chính sách và phân bổ ngân sách được triển khai theo **hệ quy chiếu tỷ lệ % tương đối** để tự động thích ứng với mọi quy mô dòng tiền của doanh nghiệp.
+### Khung Quản Trị Phân Tầng Rủi Ro (3-Tier Governance Architecture):
+Hệ thống vận hành chính sách dựa trên 3 tầng phân định rủi ro được kế thừa trực tiếp từ Module 03:
+1. **Tier 1: Irretrievable / Dead Loss ($P < 0.189$):** Nhóm khách hàng rời bỏ khó cứu vãn do nhu cầu 1 lần hoặc trải nghiệm đứt gãy nghiêm trọng. **Chiến lược:** Loại trừ $100\%$ khỏi danh sách can thiệp để triệt tiêu chi phí chìm (Deadweight Loss).
+2. **Tier 2: Savable Target ($0.189 \le P \le 0.280$):** Nhóm khách hàng mục tiêu nằm trong vùng nhạy cảm với các đòn bẩy dịch vụ, tài chính và logistics. **Chiến lược:** Áp dụng Phân luồng Can thiệp 4 Cụm và Cơ chế Động cơ Kép (Tier 2A Cấp vốn trực tiếp thu hồi trong 14 ngày & Tier 2B Tự tài trợ kích hoạt giỏ hàng mới).
+3. **Tier 3: Organic Safe ($P > 0.280$):** Nhóm khách hàng trung thành tự nhiên (xác suất $> 28.0\%$, cao gấp $> 9.4$ lần tỷ lệ tự nhiên của sàn $2.98\%$). **Chiến lược:** Không tiêu tốn ngân sách voucher, chỉ duy trì chất lượng dịch vụ chuẩn và chương trình CRM tích điểm nhằm bảo vệ trọn vẹn biên lợi nhuận gộp $30\%$.
+
+*Lưu ý về phương pháp luận tính toán:* Các số liệu tài chính tuyệt đối (ví dụ: R$ 3.804 hay R$ 106.020) được trình bày trong báo cáo đóng vai trò là **kịch bản mô phỏng giả định trên mẫu thử nghiệm cụ thể** để kiểm chứng tính khả thi của thuật toán. Trong môi trường thực tế, toàn bộ chính sách và phân bổ ngân sách được triển khai theo **hệ quy chiếu tỷ lệ % tương đối** để tự động thích ứng với mọi quy mô dòng tiền của doanh nghiệp.
 
 ---
 

@@ -79,7 +79,7 @@ class OlistCustomerPredictor:
             tier_label = "Tier 1: Irretrievable / Dead Loss (Khách vãng lai)"
             tier_color = "#e63946" # Đỏ
             can_intervene = False
-        elif prob_retain <= 0.450:
+        elif prob_retain <= 0.280:
             tier_label = "Tier 2: Savable Customers (Tệp Mục Tiêu Cần Cứu Vãn)"
             tier_color = "#f4a261" # Cam
             can_intervene = True
@@ -150,23 +150,23 @@ class OlistCustomerPredictor:
         else:
             if "Logistics" in top_cause:
                 action_title = "GÓI BẢO HIỂM SLA VẬN CHUYỂN (EXPERIENCE RECOVERY - CỤM 2)"
-                action_desc = "Gửi SMS xin lỗi từ Ban Giám Đốc + Tặng mã Hoàn 100% Cước Phí Giao Hàng (Free Ship 16,49 R$) cho đơn tiếp theo."
-                action_channel = "SMS & CRM Tự động (Tham chiếu Amazon Prime & JD.com)"
+                action_desc = "Gửi tin nhắn xin lỗi từ Ban Giám Đốc kết hợp tặng mã Hoàn 100% Cước Phí Giao Hàng (Free Ship 16,49 R$) cho đơn hàng tiếp theo."
+                action_channel = "Tin nhắn SMS và Hệ thống Quản trị Khách hàng (CRM) Tự động"
                 assigned_engine = "Nhánh Tier 2A (Cấp vốn tức thì - Hoàn vốn sau 14 ngày)"
             elif "Tài chính" in top_cause or order_spent > 140:
                 action_title = "GÓI TÀI TRỢ TRẢ GÓP 0% LÃI SUẤT (FINANCIAL RELIEF - CỤM 0)"
-                action_desc = "Sàn chi trả 6% phí chuyển đổi ngân hàng, kích hoạt cổng Trả góp 0% từ 6 - 12 kỳ trực tiếp tại checkout."
-                action_channel = "Cổng Thanh toán Checkout & App Banner (Tham chiếu Mercado Libre Brazil)"
+                action_desc = "Sàn chi trả 6% phí chuyển đổi ngân hàng, kích hoạt cổng Trả góp 0% từ 6 - 12 kỳ trực tiếp tại trang thanh toán."
+                action_channel = "Cổng Thanh toán Trực tuyến và Biểu ngữ Quảng cáo trên Ứng dụng"
                 assigned_engine = "Nhánh Tier 2A (Cấp vốn tức thì - Hoàn vốn sau 14 ngày)"
             elif "Trải nghiệm" in top_cause or review_score <= 3.0:
                 action_title = "GÓI CHĂM SÓC KHÁCH HÀNG VIP 1-1 (SERVICE RESOLUTION - CỤM 1)"
-                action_desc = "Đội CSKH VIP gọi điện hỗ trợ đổi trả trong 24h + Tặng voucher đền bù thiện chí 12% giá trị đơn hàng (~12,01 R$)."
-                action_channel = "Tổng đài CSKH VIP 1-1 & Nạp ví tự động (Tham chiếu Amazon CSKH)"
+                action_desc = "Đội ngũ CSKH liên hệ trực tiếp hỗ trợ đổi trả trong 24h kết hợp tặng phiếu đền bù thiện chí 12% giá trị đơn hàng (~12,01 R$)."
+                action_channel = "Tổng đài Chăm sóc Khách hàng Trực tiếp 1-1 và Nạp Ví Tự động"
                 assigned_engine = "Nhánh Tier 2A (Cấp vốn tức thì - Hoàn vốn sau 14 ngày)"
             else:
                 action_title = "GÓI TỰ TÀI TRỢ NUÔI DƯỠNG 4 BƯỚC (CATEGORY RE-ENGAGEMENT - CỤM 3)"
-                action_desc = "Ví hoàn tiền tạm khóa (14 ngày) + Khóa ngưỡng giỏ hàng tối thiểu (Min-Cart >= 150%) + Nhắc mua lại chu kỳ 30 ngày + Thăng hạng hội viên."
-                action_channel = "Push Notification, In-App Widget & Loyalty Passport (Tham chiếu Shopee & Taobao)"
+                action_desc = "Ví hoàn tiền tạm khóa (14 ngày) kết hợp khóa ngưỡng giỏ hàng tối thiểu (Min-Cart >= 150%) và nhắc lịch mua sắm định kỳ 30 ngày."
+                action_channel = "Thông báo Đẩy Ứng dụng, Tiện ích Trang chủ và Thẻ Hội viên Thân thiết"
                 assigned_engine = "Nhánh Tier 2B (Tự tài trợ - Bảo toàn lãi ròng 22% trên đơn mới)"
 
         return {

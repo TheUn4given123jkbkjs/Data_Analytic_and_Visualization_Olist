@@ -76,7 +76,7 @@ Dự báo xác suất giữ chân / rời bỏ, phân tầng rủi ro, phân b�
 | `top_cause` | `str` | Tên nhóm nguyên nhân chiếm tỷ trọng tác động lớn nhất |
 | `action_title` | `str` | Tiêu đề gói giải pháp can thiệp (Cụm 0, Cụm 1, Cụm 2, Cụm 3) |
 | `action_desc` | `str` | Nội dung chính sách can thiệp chi tiết |
-| `action_channel` | `str` | Kênh tiếp thị và nền tảng chuẩn đối sánh (Amazon, Shopee, Mercado Libre...) |
+| `action_channel` | `str` | Kênh triển khai tiếp thị thực tế |
 | `assigned_engine` | `str` | Luồng thực thi: Tier 2A (Cấp vốn) vs Tier 2B (Tự tài trợ) vs Không can thiệp |
 
 ---

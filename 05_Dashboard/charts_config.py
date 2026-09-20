@@ -243,15 +243,27 @@ DIAGNOSTIC_CONFIG = {
 # =============================================================================
 MODEL_CONFIG = {
     "data_prep": {
-        "tab_label": "Sàng lọc & Đa cộng tuyến (VIF)",
+        "tab_label": "Feature Engineering",
         "charts": [
+            {
+                "title": "Phân bổ Chuỗi Thời gian Train, Test & Vùng đệm Tránh Right-Censoring",
+                "file": "time_split_distribution.png",
+                "x_label": "Tháng mua hàng đầu tiên (First Purchase Month)",
+                "y_label": "Số lượng khách hàng mới",
+                "legend": "Xanh: Train (10/2016 - 04/2018). Đỏ: Test (05/2018 - 07/2018). Xanh lá: Vùng đệm 78 ngày.",
+                "allowed_directions": ["right"],
+                "insight": (
+                    "Chia tập theo thời gian (Temporal Split) với vùng đệm 78 ngày giúp triệt tiêu hoàn toàn "
+                    "lỗi rò rỉ dữ liệu tương lai (Data Leakage) và lỗi cắt phải (Right-Censoring Bias)."
+                ),
+            },
             {
                 "title": "Ma trận Tương quan Pearson & Sàng lọc Biến Rò rỉ Dữ liệu",
                 "file": "corr_heatmap.png",
                 "x_label": "Đặc trưng Đơn hàng Đầu tiên",
                 "y_label": "Đặc trưng Đơn hàng Đầu tiên",
                 "legend": "Đỏ: Tương quan dương. Xanh: Tương quan âm. Mục tiêu: is_retain.",
-                "allowed_directions": ["right"],
+                "allowed_directions": ["left"],
                 "insight": (
                     "Tất cả đặc trưng đơn lẻ đều có tương quan tuyến tính rất yếu với is_retain (|r| <= 0.02). "
                     "Điều này khẳng định bài toán giữ chân khách hàng có tính chất phi tuyến sâu sắc, đòi hỏi phải "
@@ -264,7 +276,7 @@ MODEL_CONFIG = {
                 "x_label": "Hệ số Phóng đại Phương sai (VIF)",
                 "y_label": "Danh sách Đặc trưng",
                 "legend": "Đường cam: Ngưỡng an toàn lý tưởng (VIF=2.0). Đường đỏ: Ngưỡng cảnh báo (VIF=5.0).",
-                "allowed_directions": ["left"],
+                "allowed_directions": ["right"],
                 "insight": (
                     "Sau khi loại bỏ các biến trùng lặp thông tin, toàn bộ 33 đặc trưng đều đạt chuẩn an toàn VIF < 5.0. "
                     "Mô hình hoàn toàn miễn nhiễm với hiện tượng đa cộng tuyến nghiêm trọng."
@@ -276,28 +288,17 @@ MODEL_CONFIG = {
         "tab_label": "Đánh giá Hiệu năng: Baseline vs XGBoost Giai đoạn 2",
         "charts": [
             {
-                "title": "Đối sánh Đường cong ROC & Precision-Recall: Baseline vs Advanced XGBoost",
-                "file": "model_roc_pr_curves.png",
-                "x_label": "False Positive Rate / Recall",
-                "y_label": "True Positive Rate / Precision",
-                "legend": "Xanh: Baseline Logistic Regression (PR-AUC = 0.0264). Đỏ: Advanced XGBoost (ROC-AUC = 0.5187).",
+                "title": "Đối sánh Hiệu năng Recall: Baseline vs XGBoost Ver 1 vs XGBoost Ver 2",
+                "file": "recall_comparison_3models.png",
+                "x_label": "Ngưỡng Xác suất Quyết định (Trái) / % Tệp Khách hàng Nhắm tới (Phải)",
+                "y_label": "Tỷ lệ Thu hồi Khách hàng Tiềm năng (Recall / Cumulative Gains %)",
+                "legend": "Xanh nét đứt: Baseline Logit. Cam nét chấm gạch: XGBoost Ver 1. Đỏ nét liền: XGBoost Ver 2 (Phi tuyến).",
                 "allowed_directions": ["right"],
                 "insight": (
-                    "Nhờ bổ sung 3 đặc trưng tương tác phi tuyến (delivery_speed_ratio, monthly_installment_burden, "
-                    "is_b2b_profile), XGBoost Giai đoạn 2 đạt bước nhảy vọt về Recall: tăng gấp đôi từ 28.30% lên 57.36% "
-                    "(đỉnh cao 77.36%), bắt trúng phần lớn khách hàng tiềm năng quay lại."
-                ),
-            },
-            {
-                "title": "Phân bổ Chuỗi Thời gian Train, Test & Vùng đệm Tránh Right-Censoring",
-                "file": "time_split_distribution.png",
-                "x_label": "Tháng mua hàng đầu tiên (First Purchase Month)",
-                "y_label": "Số lượng khách hàng mới",
-                "legend": "Xanh: Train (10/2016 - 04/2018). Đỏ: Test (05/2018 - 07/2018). Xanh lá: Vùng đệm 78 ngày.",
-                "allowed_directions": ["left"],
-                "insight": (
-                    "Chia tập theo thời gian (Temporal Split) với vùng đệm 78 ngày giúp triệt tiêu hoàn toàn "
-                    "lỗi rò rỉ dữ liệu tương lai (Data Leakage) và lỗi cắt phải (Right-Censoring Bias)."
+                    "Đường cong Recall và Thu hồi Lũy tiến (Cumulative Gains) chứng minh rõ: Nhờ bổ sung 3 đặc trưng "
+                    "tương tác phi tuyến (delivery_speed_ratio, monthly_installment_burden, is_b2b_profile), XGBoost Ver 2 "
+                    "vượt trội hoàn toàn so với Baseline và XGBoost Ver 1. Khi tập trung vào Top 23% khách hàng tiềm năng, "
+                    "mô hình bắt trúng tới 28.30% (đỉnh 77.36% theo phân tầng), giúp tối ưu hóa ngân sách và giảm thiểu chi phí tiếp cận lãng phí."
                 ),
             },
         ],
@@ -306,18 +307,18 @@ MODEL_CONFIG = {
         "tab_label": "Giải thích Mô hình Toàn cục (TreeSHAP XAI)",
         "charts": [
             {
-                "title": "Bóc tách Tầm quan trọng & Chiều Tác động Đặc trưng Toàn cục (TreeSHAP XAI)",
+                "title": "Bóc tách Tầm quan trọng & Chiều Tác động Đặc trưng Toàn cục (Biểu đồ 2 Phía TreeSHAP)",
                 "file": "feature_importance_shap.png",
-                "x_label": "Tầm quan trọng Đóng góp (Mean |SHAP Value|)",
-                "y_label": "Đặc trưng Phân tầng theo 4 Trụ cột Nghiệp vụ",
-                "legend": "Đỏ: Vùng miền & Ngành hàng | Vàng cam: Trải nghiệm Review | Xanh lá: Tài chính & Trả góp | Xanh dương: Logistics. Kèm chiều (+ Giữ chân / - Churn).",
-                "allowed_directions": ["right"],
+                "x_label": "Mức độ Đóng góp Biên (|SHAP Value|): ◀ Tăng Nguy cơ Churn | Thúc đẩy Giữ chân ▶",
+                "y_label": "Danh mục Đặc trưng Hành vi",
+                "legend": "Đỏ (Trái): Yếu tố làm tăng rủi ro Rời bỏ (- Churn). Xanh dương (Phải): Yếu tố thúc đẩy Giữ chân (+ Retain).",
+                "allowed_directions": ["bottom"],
                 "insight": (
-                    "TreeSHAP bóc tách 4 động lực cốt lõi chi phối quyết định quay lại: "
-                    "1. Vùng miền KT-XH & Ngành hàng (SP và miền Nam kéo giữ chân mạnh nhất, ngoại vi tăng churn); "
-                    "2. Trải nghiệm CSKH (Review cao kéo khách quay lại); "
-                    "3. Tài chính (Áp lực trả góp hàng tháng cao làm nghẽn dòng tiền, Boleto B2B có tỷ lệ tái mua vượt trội); "
-                    "4. Logistics (Giao hàng nhanh hơn cam kết SLA là đòn bẩy kích hoạt mua lại)."
+                    "Biểu đồ phân kỳ 2 phía TreeSHAP làm nổi bật rõ ràng ranh giới hành vi: "
+                    "1. Phía Thúc đẩy Giữ chân (+ Phải): Bang São Paulo (SP +0.646) và miền Nam (Sul +0.388) cùng Điểm đánh giá cao "
+                    "(Review +0.252) và nhóm hàng tiêu dùng nhanh (Phòng ngủ, Mỹ phẩm, Đồ tập) là lực hút khách hàng tái mua mạnh mẽ nhất. "
+                    "2. Phía Tăng Nguy cơ Rời bỏ (- Trái): Các bang vùng xa ngoại vi (Norte/Nordeste -0.472, RJ -0.343), "
+                    "áp lực trả góp hàng tháng cao (monthly burden -0.096) và ngành hàng cồng kềnh/bền lâu năm là các điểm nghẽn chính làm gia tăng churn."
                 ),
             },
         ],
@@ -337,6 +338,7 @@ PRESCRIPTIVE_CONFIG = {
                 "x_label": "Số lượng Cụm (k)",
                 "y_label": "Inertia (Trục trái) | Silhouette Score (Trục phải)",
                 "legend": "Đường đỏ: Ngưỡng k=4 tối ưu hóa độ phân tách hành vi người dùng.",
+                "allowed_directions": ["right"],
                 "insight": (
                     "Tại k=4, đồ thị Silhouette đạt đỉnh phân tách rõ rệt nhất, chia tệp khách hàng cần cứu vãn "
                     "thành đúng 4 nhóm điểm nghẽn riêng biệt không bị trùng lặp."
@@ -348,6 +350,7 @@ PRESCRIPTIVE_CONFIG = {
                 "x_label": "Cụm Điểm nghẽn (Friction Cluster)",
                 "y_label": "Số lượng Khách hàng Mục tiêu",
                 "legend": "Cụm 0 (Tài chính: 2,319 khách), Cụm 1 (Review xấu: 2,086 khách), Cụm 2 (Giao trễ: 1,987 khách), Cụm 3 (Ngành hàng: 7,133 khách).",
+                "allowed_directions": ["left"],
                 "insight": (
                     "Cụm 3 (Ngành hàng) chiếm quy mô lớn nhất (52.74%), nhưng Cụm 0, 1, 2 là những nhóm có điểm nghẽn "
                     "trải nghiệm cấp bách cần can thiệp chính sách khẩn cấp để ngăn chặn rời bỏ."
@@ -364,6 +367,7 @@ PRESCRIPTIVE_CONFIG = {
                 "x_label": "Ngân sách Cấp trước (R$)",
                 "y_label": "Lợi nhuận Ròng Kỳ vọng (R$)",
                 "legend": "Điểm bão hòa kinh tế tại 3,803.95 R$ (3.59% tổng ngân sách tối đa), tối đa hóa Lợi nhuận Ròng đạt 10,925.85 R$.",
+                "allowed_directions": ["right"],
                 "insight": (
                     "Quy luật hiệu suất giảm dần (Diminishing Returns) xuất hiện rõ rệt: Đầu tư vượt mốc 3,803.95 R$ "
                     "sẽ làm giảm hiệu quả biên ROI. Do đó 3,803.95 R$ là điểm cân bằng tài chính tối ưu hoàn hảo cho 600 khách VIP Tier 2A."
@@ -375,6 +379,7 @@ PRESCRIPTIVE_CONFIG = {
                 "x_label": None,
                 "y_label": None,
                 "legend": "Cụm 0 (Áp lực tài chính: 50.9%), Cụm 1 (Đánh giá kém: 24.5%), Cụm 2 (Giao hàng: 24.6%), Cụm 3 (Tự tài trợ: 0.0%).",
+                "allowed_directions": ["left"],
                 "insight": (
                     "50.9% vốn cấp trước được dồn vào Cụm 0 (Tài trợ trả góp 0% cho đơn to), 49.1% còn lại chia đều "
                     "cho Cụm 1 (Đền bù thiện chí) và Cụm 2 (Hoàn phí ship SLA). Cụm 3 tự vận hành bằng cơ chế Tự tài trợ."
@@ -391,6 +396,7 @@ PRESCRIPTIVE_CONFIG = {
                 "x_label": "Biên Lợi nhuận Ròng Doanh nghiệp (%)",
                 "y_label": "Cụm Can thiệp Marketing",
                 "legend": "Tỷ lệ hòa vốn dao động từ 1.83% đến 14.71% tùy thuộc biên lợi nhuận và cước phí can thiệp.",
+                "allowed_directions": ["right"],
                 "insight": (
                     "Tại biên lợi nhuận chuẩn 30%, toàn bộ 4 cụm đều có điểm hòa vốn cực thấp (< 6.5%), "
                     "chứng minh chiến dịch giữ chân có biên độ an toàn tài chính (Safety Margin) rất rộng."
@@ -402,6 +408,7 @@ PRESCRIPTIVE_CONFIG = {
                 "x_label": "Kịch bản Thị trường",
                 "y_label": "Lợi nhuận Ròng Thu về (R$)",
                 "legend": "Bi quan (Lợi nhuận +1,650 R$), Cơ sở (+10,926 R$), Lạc quan (+20,201 R$).",
+                "allowed_directions": ["left"],
                 "insight": (
                     "Ngay cả trong kịch bản Bi quan nhất (Uplift giảm 40%), chiến dịch Tier 2A vẫn bảo toàn lợi nhuận "
                     "dương (+1,650 R$), loại bỏ hoàn toàn nguy cơ thua lỗ vốn đầu tư ban đầu."

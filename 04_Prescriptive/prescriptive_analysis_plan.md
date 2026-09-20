@@ -48,7 +48,7 @@ fix/
 ## 4. QUY TRÌNH THỰC HIỆN CHI TIẾT (6 BƯỚC CHUẨN MỰC)
 
 ### Bước 1: Trích Xuất Dữ Liệu và Thống Kê Phân Bổ Điểm Nghẽn Thực Tế (Data Ingestion & Empirical Profiling)
-* Trích xuất tệp khách hàng Tier 2 (Savable Customers: $0.189 \le P(\text{Retain}) \le 0.450$) từ file `fix/03_Predictive/data/train_test/test_predictions.csv`.
+* Trích xuất tệp khách hàng Tier 2 (Savable Customers: $0.189 \le P(\text{Retain}) \le 0.280$) từ file `fix/03_Predictive/data/train_test/test_predictions.csv` dựa trên bộ lọc 3 tầng quản trị rủi ro (3-Tier Governance).
 * Đo lường và lập bảng phân bổ tỷ trọng % thực tế của 4 nhóm điểm nghẽn chính:
   1. **Điểm nghẽn Vận chuyển (Logistics Friction)**: Tỷ lệ % đơn hàng bị trễ hẹn giao (`delivery_delay > 0`), số ngày trễ trung bình, cước vận chuyển trung bình (`freight_value`).
   2. **Điểm nghẽn Tài chính & Trả góp (Financial Burden)**: Tỷ lệ % đơn hàng giá trị cao mua trả góp nhiều kỳ (`order_spent > 300` hoặc `max_installments >= 6`), mức chi trả bình quân mỗi kỳ.

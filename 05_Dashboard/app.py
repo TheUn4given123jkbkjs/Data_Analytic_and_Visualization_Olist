@@ -43,84 +43,420 @@ st.set_page_config(
 # Inject Custom CSS cho khung nhận xét (Insight Cards) và Badges
 st.markdown("""
 <style>
-    .insight-card {
-        background-color: #f8f9fa;
-        border-left: 5px solid #1f77b4;
-        padding: 16px 20px;
-        border-radius: 6px;
-        margin-bottom: 12px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    /* =======================================================================
+       GLOBAL LARGE TYPOGRAPHY SYSTEM ACROSS ALL 5 TABS (MINIMUM >= 22px - 26px)
+       ======================================================================= */
+    html, body {
+        font-size: 22px;
     }
-    .insight-card h4 {
-        margin-top: 0;
-        color: #0f4c81;
-        font-weight: 700;
-        font-size: 1.35rem;
-    }
-    .insight-text {
-        font-size: 30px !important;
-        line-height: 1.55;
+    
+    .stMarkdown p, .stMarkdown li, [data-testid="stMarkdownContainer"] p, [data-testid="stMarkdownContainer"] li {
+        font-size: 24px !important;
+        line-height: 1.65 !important;
         color: #1e293b;
     }
+    
+    /* Captions & Ghi chú dưới biểu đồ */
+    .stCaption, [data-testid="stCaptionContainer"] p, [data-testid="stCaptionContainer"] span, [data-testid="stCaptionContainer"] * {
+        font-size: 22px !important;
+        color: #475569 !important;
+        line-height: 1.5 !important;
+    }
+
+    /* =======================================================================
+       TIÊU ĐỀ SECTION CHÍNH (50PX VỪA VẶN, NỔI BẬT)
+       ======================================================================= */
+    .main-section-header,
+    h1.main-section-header,
+    h2.main-section-header,
+    div.main-section-header,
+    p.main-section-header,
+    [data-testid="stMarkdownContainer"] .main-section-header,
+    [data-testid="stMarkdownContainer"] h1.main-section-header,
+    [data-testid="stMarkdownContainer"] h2.main-section-header,
+    [data-testid="stMarkdownContainer"] div.main-section-header,
+    [data-testid="stMarkdownContainer"] p.main-section-header {
+        font-size: 50px !important;
+        font-weight: 900 !important;
+        color: #0f4c81 !important;
+        margin-top: 20px !important;
+        margin-bottom: 14px !important;
+        line-height: 1.2 !important;
+        display: block !important;
+    }
+
+    /* Tiêu đề phân mục lớn */
+    h1, [data-testid="stMarkdownContainer"] h1 {
+        font-size: 44px !important;
+        font-weight: 900 !important;
+        color: #0f172a !important;
+        line-height: 1.3 !important;
+    }
+    h2, [data-testid="stMarkdownContainer"] h2, .main h2 {
+        font-size: 36px !important;
+        font-weight: 800 !important;
+        color: #0f4c81 !important;
+        margin-top: 20px !important;
+        margin-bottom: 14px !important;
+        line-height: 1.25 !important;
+    }
+    h3, [data-testid="stMarkdownContainer"] h3 {
+        font-size: 28px !important;
+        font-weight: 800 !important;
+        color: #1e293b !important;
+    }
+    h4, [data-testid="stMarkdownContainer"] h4 {
+        font-size: 26px !important;
+        font-weight: 700 !important;
+        color: #334155 !important;
+    }
+    h5, [data-testid="stMarkdownContainer"] h5 {
+        font-size: 24px !important;
+        font-weight: 700 !important;
+    }
+
+    /* Khung nhận xét kéo trượt (Sliding Insight Cards) ở cả 4 phân hệ */
+    .insight-card {
+        background-color: #f8fafc;
+        border-left: 8px solid #1f77b4;
+        padding: 24px 28px;
+        border-radius: 12px;
+        margin-bottom: 18px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+    .insight-card h4, .insight-card h4 * {
+        margin-top: 0;
+        color: #0f4c81 !important;
+        font-weight: 800 !important;
+        font-size: 28px !important;
+        margin-bottom: 14px !important;
+    }
+    .insight-card p, .insight-card span, .insight-card div, .insight-text {
+        font-size: 26px !important;
+        line-height: 1.6 !important;
+        color: #1e293b !important;
+    }
+    
+    /* =======================================================================
+       DEMO RESULTS & PRESCRIPTION ACTION BOX TYPOGRAPHY (26px - 28px)
+       ======================================================================= */
+    .demo-large-text,
+    .demo-large-text *,
+    .demo-large-text p,
+    .demo-large-text span,
+    .demo-large-text strong,
+    .demo-large-text div,
+    .demo-action-box,
+    .demo-action-box *,
+    .demo-action-box p,
+    .demo-action-box span,
+    .demo-action-box strong,
+    .demo-action-box div {
+        font-size: 26px !important;
+        line-height: 1.55 !important;
+    }
+
+    .demo-action-box {
+        background-color: #f8fafc;
+        border-left: 8px solid #10b981;
+        border-radius: 12px;
+        padding: 24px 28px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        margin-top: 12px;
+    }
+    .demo-action-box h3,
+    .demo-action-box h3 * {
+        font-size: 28px !important;
+        font-weight: 800 !important;
+        color: #047857 !important;
+        margin-top: 0;
+        margin-bottom: 16px;
+        line-height: 1.35 !important;
+    }
+    
+    /* Nâng cỡ chữ các nhãn (labels) và input trong Form & Điều khiển */
+    [data-testid="stForm"] label p, 
+    [data-testid="stForm"] label span, 
+    [data-testid="stForm"] label div,
+    .stSelectbox label p,
+    .stSelectbox label span,
+    .stSlider label p,
+    .stSlider label span,
+    .stNumberInput label p,
+    .stNumberInput label span {
+        font-size: 26px !important;
+        font-weight: 700 !important;
+        color: #0f172a !important;
+        margin-bottom: 8px !important;
+    }
+    
+    /* Cỡ chữ nội dung đang chọn trong input, number, selectbox */
+    [data-testid="stForm"] input, 
+    [data-testid="stForm"] div[data-baseweb="select"] *,
+    .stSelectbox div[data-baseweb="select"] *,
+    .stNumberInput input,
+    div[data-baseweb="select"] span,
+    div[data-baseweb="select"] div {
+        font-size: 26px !important;
+        font-weight: 600 !important;
+        color: #0f172a !important;
+    }
+    
+    /* Cỡ chữ toàn bộ danh sách tùy chọn khi mở sổ xuống (Dropdown Menu Listbox Items) */
+    div[data-baseweb="popover"] *,
+    ul[role="listbox"] li,
+    ul[role="listbox"] li div,
+    ul[role="listbox"] li span,
+    li[role="option"] * {
+        font-size: 24px !important;
+        font-weight: 600 !important;
+        line-height: 1.45 !important;
+        padding-top: 6px !important;
+        padding-bottom: 6px !important;
+    }
+    .stSlider div[data-testid="stThumbValue"],
+    .stSlider div[data-testid="stTickBarMin"],
+    .stSlider div[data-testid="stTickBarMax"] {
+        font-size: 24px !important;
+        font-weight: 700 !important;
+    }
+    
+    /* Nút bấm AI thông minh (Xanh biển tươi sáng, dịu mắt) */
+    [data-testid="stFormSubmitButton"] button {
+        background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 50%, #38bdf8 100%) !important;
+        color: #ffffff !important;
+        font-size: 26px !important;
+        font-weight: 900 !important;
+        letter-spacing: 1px;
+        padding: 20px 36px !important;
+        border: 1px solid rgba(255, 255, 255, 0.4) !important;
+        border-radius: 14px !important;
+        box-shadow: 0 6px 20px rgba(14, 165, 233, 0.35) !important;
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        margin-top: 24px !important;
+        margin-bottom: 12px !important;
+        text-transform: uppercase;
+        cursor: pointer;
+    }
+    [data-testid="stFormSubmitButton"] button:hover {
+        background: linear-gradient(135deg, #0369a1 0%, #0284c7 50%, #0ea5e9 100%) !important;
+        box-shadow: 0 8px 25px rgba(14, 165, 233, 0.5) !important;
+        transform: translateY(-3px) scale(1.015) !important;
+    }
+    
+    /* Metrics Top Cards */
+    [data-testid="stMetricLabel"] * {
+        font-size: 22px !important;
+        font-weight: 700 !important;
+        color: #334155 !important;
+    }
+    [data-testid="stMetricValue"] * {
+        font-size: 34px !important;
+        font-weight: 800 !important;
+    }
     .metric-sub {
-        font-size: 0.85rem;
+        font-size: 20px !important;
         color: #6c757d;
         margin-top: -8px;
     }
     .badge-tier {
         display: inline-block;
-        padding: 4px 12px;
+        padding: 6px 14px;
         border-radius: 12px;
         font-weight: bold;
-        font-size: 0.9rem;
+        font-size: 20px !important;
     }
-    /* Tùy biến thanh trượt cuộn ngang (Horizontal Scroll Slider) cho tất cả các Subtabs */
+    
+    /* =======================================================================
+       DANH MỤC SUBTABS (TABS CON) Ở TẤT CẢ CÁC PHÂN HỆ (DẠNG THẺ LỚN 26px)
+       ======================================================================= */
     [data-testid="stTabs"] {
         width: 100%;
-        margin-top: 8px;
-        margin-bottom: 16px;
+        margin-top: 14px;
+        margin-bottom: 24px;
     }
-    div[data-baseweb="tab-list"] {
+    
+    div[data-baseweb="tab-list"],
+    [data-testid="stTabs"] [role="tablist"] {
         display: flex !important;
         flex-wrap: nowrap !important;
         overflow-x: auto !important;
         overflow-y: hidden !important;
         white-space: nowrap !important;
         scrollbar-width: thin !important;
-        scrollbar-color: #1f77b4 #e9ecef !important;
-        padding-bottom: 8px !important;
-        margin-bottom: 12px !important;
-        gap: 8px !important;
+        scrollbar-color: #0284c7 #e0f2fe !important;
+        padding-bottom: 12px !important;
+        margin-bottom: 20px !important;
+        gap: 12px !important;
         scroll-behavior: smooth !important;
         -webkit-overflow-scrolling: touch !important;
-        border-bottom: 1px solid #dee2e6;
+        border-bottom: 3px solid #bae6fd !important;
     }
-    div[data-baseweb="tab-list"]::-webkit-scrollbar {
-        height: 6px !important;
+    div[data-baseweb="tab-list"]::-webkit-scrollbar,
+    [data-testid="stTabs"] [role="tablist"]::-webkit-scrollbar {
+        height: 10px !important;
     }
-    div[data-baseweb="tab-list"]::-webkit-scrollbar-track {
-        background: #e9ecef !important;
-        border-radius: 4px !important;
+    div[data-baseweb="tab-list"]::-webkit-scrollbar-track,
+    [data-testid="stTabs"] [role="tablist"]::-webkit-scrollbar-track {
+        background: #f0f9ff !important;
+        border-radius: 6px !important;
     }
-    div[data-baseweb="tab-list"]::-webkit-scrollbar-thumb {
-        background: #1f77b4 !important;
-        border-radius: 4px !important;
+    div[data-baseweb="tab-list"]::-webkit-scrollbar-thumb,
+    [data-testid="stTabs"] [role="tablist"]::-webkit-scrollbar-thumb {
+        background: #38bdf8 !important;
+        border-radius: 6px !important;
     }
-    div[data-baseweb="tab-list"]::-webkit-scrollbar-thumb:hover {
-        background: #0f4c81 !important;
-    }
-    div[data-baseweb="tab-list"] button {
+    
+    /* Thiết kế từng nút Subtab dạng thẻ Card lớn, rõ ràng */
+    div[data-baseweb="tab-list"] button,
+    button[data-baseweb="tab"],
+    button[role="tab"],
+    [data-testid="stTabs"] button {
         flex-shrink: 0 !important;
         white-space: nowrap !important;
-        border-radius: 6px 6px 0 0 !important;
-        padding: 8px 18px !important;
-        font-weight: 600 !important;
-        font-size: 0.92rem !important;
+        border-radius: 12px 12px 0 0 !important;
+        padding: 16px 28px !important;
+        background-color: #f8fafc !important;
+        border: 1px solid #e2e8f0 !important;
+        border-bottom: none !important;
+        margin-right: 8px !important;
+        height: auto !important;
+        min-height: 58px !important;
         transition: all 0.2s ease-in-out !important;
     }
-    div[data-baseweb="tab-list"] button:hover {
-        background-color: #f1f3f5 !important;
-        color: #0f4c81 !important;
+    
+    div[data-baseweb="tab-list"] button *,
+    div[data-baseweb="tab-list"] p,
+    div[data-baseweb="tab-list"] span,
+    div[data-baseweb="tab-list"] div,
+    button[data-baseweb="tab"] *,
+    button[role="tab"] *,
+    button[role="tab"] p,
+    button[role="tab"] span,
+    [data-testid="stTabs"] button *,
+    [data-testid="stTabs"] button p,
+    [data-testid="stTabs"] button span,
+    [data-testid="stTabs"] p,
+    [data-testid="stTabs"] span {
+        font-size: 26px !important;
+        font-weight: 800 !important;
+        line-height: 1.4 !important;
+        color: #334155 !important;
+    }
+    
+    div[data-baseweb="tab-list"] button:hover,
+    button[role="tab"]:hover,
+    [data-testid="stTabs"] button:hover {
+        background-color: #f0f9ff !important;
+        border-color: #7dd3fc !important;
+    }
+    div[data-baseweb="tab-list"] button:hover *,
+    button[role="tab"]:hover *,
+    [data-testid="stTabs"] button:hover * {
+        color: #0284c7 !important;
+    }
+    
+    /* Tab đang chọn (Active Subtab) */
+    div[data-baseweb="tab-list"] button[aria-selected="true"],
+    button[role="tab"][aria-selected="true"],
+    [data-testid="stTabs"] button[aria-selected="true"] {
+        background-color: #eff6ff !important;
+        border-top: 5px solid #0284c7 !important;
+        border-left: 1px solid #93c5fd !important;
+        border-right: 1px solid #93c5fd !important;
+        box-shadow: 0 -2px 10px rgba(2, 132, 199, 0.12) !important;
+    }
+    div[data-baseweb="tab-list"] button[aria-selected="true"] *,
+    button[role="tab"][aria-selected="true"] *,
+    [data-testid="stTabs"] button[aria-selected="true"] * {
+        color: #0284c7 !important;
+        font-weight: 900 !important;
+    }
+    div[data-baseweb="tab-highlight"] {
+        background-color: #0284c7 !important;
+        height: 4px !important;
+    }
+    
+    /* Sidebar Navigation Bars (22px - 24px, Tone Xanh Biển Nhạt Dịu Mắt) */
+    [data-testid="stSidebar"] [data-testid="stVerticalBlock"] > div > div > .stButton > button {
+        width: 100% !important;
+        text-align: left !important;
+        display: flex !important;
+        justify-content: flex-start !important;
+        align-items: center !important;
+        padding: 18px 22px !important;
+        margin-bottom: 12px !important;
+        border-radius: 12px !important;
+        font-size: 22px !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.3px !important;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        cursor: pointer !important;
+    }
+    /* Inactive Navigation Bar */
+    [data-testid="stSidebar"] .stButton > button[kind="secondary"] {
+        background-color: #f8fafc !important;
+        color: #334155 !important;
+        border: 1px solid #e2e8f0 !important;
+        border-left: 6px solid #cbd5e1 !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+    }
+    /* Inactive Navigation Bar Hover Effect (Xanh biển nhạt tươi sáng) */
+    [data-testid="stSidebar"] .stButton > button[kind="secondary"]:hover {
+        background-color: #f0f9ff !important;
+        color: #0284c7 !important;
+        border-color: #bae6fd !important;
+        border-left: 6px solid #38bdf8 !important;
+        transform: translateX(6px) !important;
+        box-shadow: 0 4px 14px rgba(14, 165, 233, 0.15) !important;
+    }
+    /* Active Navigation Bar (Currently Selected Tab - Xanh Biển Tươi) */
+    [data-testid="stSidebar"] .stButton > button[kind="primary"] {
+        background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%) !important;
+        color: #ffffff !important;
+        border: 1px solid #38bdf8 !important;
+        border-left: 6px solid #7dd3fc !important;
+        box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25) !important;
+        font-weight: 800 !important;
+        font-size: 22px !important;
+    }
+    /* Active Navigation Bar Hover */
+    [data-testid="stSidebar"] .stButton > button[kind="primary"]:hover {
+        background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%) !important;
+        transform: translateX(6px) !important;
+        box-shadow: 0 6px 18px rgba(2, 132, 199, 0.35) !important;
+    }
+    
+    /* Expanders & Markdown Tables */
+    [data-testid="stExpander"] summary, [data-testid="stExpander"] summary * {
+        font-size: 24px !important;
+        font-weight: 700 !important;
+        padding: 12px 0 !important;
+    }
+    
+    /* Nút bấm tương tác chung (Mũi tên kéo nhận xét, điều khiển) */
+    .stButton > button {
+        font-size: 24px !important;
+        font-weight: 700 !important;
+        border-radius: 8px !important;
+    }
+    table, table th, table td, .stMarkdown table, .stMarkdown table * {
+        font-size: 22px !important;
+        line-height: 1.55 !important;
+    }
+    table th {
+        background-color: #f1f5f9 !important;
+        font-weight: 800 !important;
+        padding: 14px 18px !important;
+    }
+    table td {
+        padding: 12px 18px !important;
+    }
+    
+    /* Alert / Info Boxes */
+    [data-testid="stAlert"] * {
+        font-size: 24px !important;
+        line-height: 1.6 !important;
     }
 
     /* =======================================================================
@@ -401,27 +737,35 @@ render_chart_group_alternating = render_chart_group_sliding
 # ---------------------------------------------------------------------------
 # SIDEBAR ĐIỀU HƯỚNG MỤC PHÂN TÍCH
 # ---------------------------------------------------------------------------
+NAV_ITEMS = [
+    "Demo",
+    "01. Descriptive",
+    "02. Diagnostic",
+    "03. Predictive",
+    "04. Prescriptive"
+]
+
+if "nav_choice" not in st.session_state or st.session_state.nav_choice not in NAV_ITEMS:
+    st.session_state.nav_choice = NAV_ITEMS[0]
+
 with st.sidebar:
     st.title("Olist Retention AI")
     st.caption("Hệ thống Dự báo & Tối ưu hóa Giữ chân Khách hàng")
     st.divider()
     
     st.markdown("### ĐIỀU HƯỚNG CHƯƠNG TRÌNH")
-    nav_choice = st.radio(
-        "Lựa chọn phân hệ phân tích:",
-        [
-            "DEMO TRỰC TIẾP: DỰ BÁO & CHỈ ĐỊNH",
-            "01. Phân tích Mô tả (EDA)",
-            "02. Phân tích Chẩn đoán (Diagnostic)",
-            "03. Đánh giá Mô hình Dự báo (Predictive)",
-            "04. Chiến lược Tối ưu hóa (Prescriptive)"
-        ],
-        index=0,
-        label_visibility="collapsed"
-    )
-    
+    for item in NAV_ITEMS:
+        is_active = (st.session_state.nav_choice == item)
+        btn_type = "primary" if is_active else "secondary"
+        if st.button(item, key=f"nav_btn_{item}", type=btn_type, use_container_width=True):
+            if st.session_state.nav_choice != item:
+                st.session_state.nav_choice = item
+                st.rerun()
+                
     st.divider()
     st.caption("Đồ án Phân tích và Trực quan hóa Dữ liệu · TDTU")
+
+nav_choice = st.session_state.nav_choice
 
 # ---------------------------------------------------------------------------
 # HEADER CHỈ SỐ TOÀN DIỆN
@@ -480,96 +824,142 @@ PAYMENTS_DICT = {
 }
 
 # ===========================================================================
-# 1. PHÂN HỆ: DEMO TRỰC TIẾP (NHÂN VẬT CHÍNH)
+# 1. PHÂN HỆ: DEMO (DỰ BÁO & CHỈ ĐỊNH)
 # ===========================================================================
-if nav_choice == "DEMO TRỰC TIẾP: DỰ BÁO & CHỈ ĐỊNH":
-    st.markdown("## Dự Đoán Thời Gian Thực và Chỉ Định Hành Động")
+if nav_choice == "Demo":
+    st.markdown("<div class='main-section-header' style='font-size: 50px !important; font-weight: 900 !important; color: #0f4c81 !important; margin-top: 20px !important; margin-bottom: 14px !important; line-height: 1.2 !important;'>Dự Đoán Thời Gian Thực và Chỉ Định Hành Động</div>", unsafe_allow_html=True)
     st.markdown(
         "Nhập thông tin đơn hàng đầu tiên ($T_0$) của khách hàng để Mô hình AI dự báo xác suất quay lại, "
         "tự động bóc tách **4 nhóm nguyên nhân TreeSHAP** và gán **Gói chính sách Marketing tối ưu**."
     )
     
-    st.markdown("### Chọn Nhanh Mẫu Khách Hàng Điển Hình")
-    p_col1, p_col2, p_col3, p_col4 = st.columns(4)
+    PRESET_OPTIONS = {
+        "Tuỳ chỉnh thông số tự do (Custom Input)": None,
+        "Mẫu 1: Khách Trả góp Đơn lớn (Cụm 0 - Áp lực tài chính)": {
+            "order_spent": 380.0, "max_installments": 10, "payment_type": "credit_card",
+            "delivery_days": 7.0, "estimated_delivery_days": 18.0, "review_score": 5,
+            "customer_state": "SP", "product_category": "relogios_presentes"
+        },
+        "Mẫu 2: Khách Đánh giá 1 Sao (Cụm 1 - Khủng hoảng CSKH)": {
+            "order_spent": 95.0, "max_installments": 2, "payment_type": "credit_card",
+            "delivery_days": 12.0, "estimated_delivery_days": 15.0, "review_score": 1,
+            "customer_state": "RJ", "product_category": "beleza_saude"
+        },
+        "Mẫu 3: Khách Giao hàng Trễ hạn (Cụm 2 - Hụt cam kết SLA)": {
+            "order_spent": 140.0, "max_installments": 3, "payment_type": "credit_card",
+            "delivery_days": 28.0, "estimated_delivery_days": 12.0, "review_score": 2,
+            "customer_state": "BA", "product_category": "cama_mesa_banho"
+        },
+        "Mẫu 4: Khách hàng Vãng lai Đơn nhỏ (Tier 1 - Churn tự nhiên)": {
+            "order_spent": 35.0, "max_installments": 1, "payment_type": "boleto",
+            "delivery_days": 6.0, "estimated_delivery_days": 14.0, "review_score": 5,
+            "customer_state": "SP", "product_category": "telefonia"
+        },
+        "Mẫu 5: Khách Trung thành Tự nhiên (Tier 3 - Organic Safe)": {
+            "order_spent": 150.0, "max_installments": 10, "payment_type": "credit_card",
+            "delivery_days": 2.0, "estimated_delivery_days": 20.0, "review_score": 5,
+            "customer_state": "SP", "product_category": "perfumaria"
+        },
+        "Mẫu ngẫu nhiên (Random Profile)": "RANDOM"
+    }
     
-    preset_chosen = None
-    with p_col1:
-        if st.button("Khách Trả góp Đơn lớn (Cụm 0)", use_container_width=True):
-            preset_chosen = {
-                "order_spent": 380.0, "max_installments": 10, "payment_type": "credit_card",
-                "delivery_days": 7.0, "estimated_delivery_days": 18.0, "review_score": 5,
-                "customer_state": "SP", "product_category": "relogios_presentes"
-            }
-    with p_col2:
-        if st.button("Khách Đánh giá 1 Sao (Cụm 1)", use_container_width=True):
-            preset_chosen = {
-                "order_spent": 95.0, "max_installments": 2, "payment_type": "credit_card",
-                "delivery_days": 12.0, "estimated_delivery_days": 15.0, "review_score": 1,
-                "customer_state": "RJ", "product_category": "beleza_saude"
-            }
-    with p_col3:
-        if st.button("Khách Giao hàng Trễ hạn (Cụm 2)", use_container_width=True):
-            preset_chosen = {
-                "order_spent": 140.0, "max_installments": 3, "payment_type": "credit_card",
-                "delivery_days": 28.0, "estimated_delivery_days": 12.0, "review_score": 2,
-                "customer_state": "BA", "product_category": "cama_mesa_banho"
-            }
-    with p_col4:
-        if st.button("Khách hàng Vãng lai (Tier 1)", use_container_width=True):
-            preset_chosen = {
-                "order_spent": 35.0, "max_installments": 1, "payment_type": "boleto",
-                "delivery_days": 6.0, "estimated_delivery_days": 14.0, "review_score": 5,
-                "customer_state": "SP", "product_category": "telefonia"
-            }
+    if "random_profile_counter" not in st.session_state:
+        st.session_state.random_profile_counter = 101
 
-    # Form nhập liệu
-    with st.form("hero_prediction_form"):
-        st.markdown("#### Thông số Đơn hàng Đầu tiên ($T_0$)")
-        f_c1, f_c2, f_c3 = st.columns(3)
+    # Bố cục 2 Cột Song Song: Kết Quả Dự Đoán Bên Trái (58%) | Bảng Chọn Chỉ Số Bên Phải (42%)
+    col_results, col_controls = st.columns([0.58, 0.42], gap="large")
+
+    with col_controls:
+        st.markdown("### THIẾT LẬP THÔNG SỐ ĐƠN HÀNG")
+        selected_preset_key = st.selectbox(
+            "Chọn Nhanh Mẫu Khách Hàng Điển Hình:",
+            list(PRESET_OPTIONS.keys()),
+            index=0,
+            help="Chọn một kịch bản điển hình để tự động điền các thông số tương ứng vào form bên dưới"
+        )
         
-        # Mặc định lấy từ preset hoặc giá trị chuẩn
-        def_spent = preset_chosen["order_spent"] if preset_chosen else 150.0
-        def_inst = preset_chosen["max_installments"] if preset_chosen else 3
-        def_pay = preset_chosen["payment_type"] if preset_chosen else "credit_card"
-        def_deliv = preset_chosen["delivery_days"] if preset_chosen else 8.0
-        def_est = preset_chosen["estimated_delivery_days"] if preset_chosen else 15.0
-        def_score = preset_chosen["review_score"] if preset_chosen else 5
-        def_state = preset_chosen["customer_state"] if preset_chosen else "SP"
-        def_cat = preset_chosen["product_category"] if preset_chosen else "cama_mesa_banho"
-        
-        with f_c1:
-            in_spent = st.number_input("Tổng giá trị đơn hàng (R$)", min_value=1.0, value=float(def_spent), step=10.0)
-            in_installments = st.number_input("Số kỳ trả góp", min_value=1, max_value=24, value=int(def_inst))
+        preset_val = PRESET_OPTIONS[selected_preset_key]
+        if preset_val == "RANDOM":
+            rng = np.random.RandomState(st.session_state.random_profile_counter)
+            r_spent = float(rng.choice([29.0, 48.0, 75.0, 110.0, 165.0, 245.0, 380.0, 520.0, 780.0]))
+            r_pay = str(rng.choice(["credit_card", "credit_card", "credit_card", "boleto", "voucher", "debit_card"]))
+            r_inst = int(rng.choice([1, 2, 3, 4, 6, 8, 10, 12])) if r_pay == "credit_card" else 1
+            r_est = float(rng.randint(8, 28))
+            r_bias = int(rng.choice([-10, -6, -3, 0, 2, 8, 14]))
+            r_deliv = float(max(1.0, r_est + r_bias))
+            r_score = int(rng.choice([1, 2, 3, 4, 5, 5, 5]))
+            r_state = str(rng.choice(list(STATES_DICT.keys())))
+            r_cat = str(rng.choice(list(CATEGORIES_DICT.keys())))
+            
+            preset_chosen = {
+                "order_spent": r_spent,
+                "max_installments": r_inst,
+                "payment_type": r_pay,
+                "delivery_days": r_deliv,
+                "estimated_delivery_days": r_est,
+                "review_score": r_score,
+                "customer_state": r_state,
+                "product_category": r_cat
+            }
+            if st.button("Sinh Mẫu Ngẫu Nhiên Khác (Re-roll Random)", use_container_width=True):
+                st.session_state.random_profile_counter += 1
+                st.rerun()
+        else:
+            preset_chosen = preset_val
+
+        # Form nhập liệu dạng 1 cột dọc bên phải
+        with st.form("hero_prediction_form"):
+            submitted = st.form_submit_button("CHẠY DỰ BÁO AI VÀ GÁN CHÍNH SÁCH CAN THIỆP", use_container_width=True)
+            
+            st.markdown("#### Thông số Đơn hàng Đầu tiên ($T_0$)")
+            
+            # Mặc định lấy từ preset hoặc giá trị chuẩn
+            def_spent = preset_chosen["order_spent"] if preset_chosen else 150.0
+            def_inst = preset_chosen["max_installments"] if preset_chosen else 3
+            def_pay = preset_chosen["payment_type"] if preset_chosen else "credit_card"
+            def_deliv = preset_chosen["delivery_days"] if preset_chosen else 8.0
+            def_est = preset_chosen["estimated_delivery_days"] if preset_chosen else 15.0
+            def_score = preset_chosen["review_score"] if preset_chosen else 5
+            def_state = preset_chosen["customer_state"] if preset_chosen else "SP"
+            def_cat = preset_chosen["product_category"] if preset_chosen else "cama_mesa_banho"
+            
+            form_key_suffix = f"{selected_preset_key}_{st.session_state.random_profile_counter}"
+            
+            in_spent = st.number_input("Tổng giá trị đơn hàng (R$)", min_value=1.0, value=float(def_spent), step=10.0, key=f"spent_{form_key_suffix}")
+            in_installments = st.number_input("Số kỳ trả góp", min_value=1, max_value=24, value=int(def_inst), key=f"inst_{form_key_suffix}")
+            
             pay_keys = list(PAYMENTS_DICT.keys())
             pay_idx = pay_keys.index(def_pay) if def_pay in pay_keys else 0
             in_pay_type = st.selectbox(
                 "Phương thức thanh toán", pay_keys,
                 index=pay_idx,
-                format_func=lambda k: PAYMENTS_DICT.get(k, k)
+                format_func=lambda k: PAYMENTS_DICT.get(k, k),
+                key=f"pay_{form_key_suffix}"
             )
-        with f_c2:
-            in_delivery = st.number_input("Số ngày giao hàng thực tế", min_value=1.0, value=float(def_deliv), step=1.0)
-            in_est_delivery = st.number_input("Số ngày giao hàng dự kiến (SLA)", min_value=1.0, value=float(def_est), step=1.0)
-            in_review = st.slider("Điểm đánh giá (Review score)", 1, 5, int(def_score))
-        with f_c3:
+            
+            in_delivery = st.number_input("Số ngày giao hàng thực tế", min_value=1.0, value=float(def_deliv), step=1.0, key=f"deliv_{form_key_suffix}")
+            in_est_delivery = st.number_input("Số ngày giao hàng dự kiến (SLA)", min_value=1.0, value=float(def_est), step=1.0, key=f"est_{form_key_suffix}")
+            in_review = st.slider("Điểm đánh giá (Review score)", 1, 5, int(def_score), key=f"rev_{form_key_suffix}")
+            
             state_keys = list(STATES_DICT.keys())
             state_idx = state_keys.index(def_state) if def_state in state_keys else 0
             in_state = st.selectbox(
                 "Bang khách hàng (State / Região)", state_keys,
                 index=state_idx,
-                format_func=lambda k: STATES_DICT.get(k, k)
+                format_func=lambda k: STATES_DICT.get(k, k),
+                key=f"state_{form_key_suffix}"
             )
+            
             cat_keys = list(CATEGORIES_DICT.keys())
             cat_idx = cat_keys.index(def_cat) if def_cat in cat_keys else 0
             in_category = st.selectbox(
                 "Ngành hàng sản phẩm (Category)", cat_keys,
                 index=cat_idx,
-                format_func=lambda k: CATEGORIES_DICT.get(k, k)
+                format_func=lambda k: CATEGORIES_DICT.get(k, k),
+                key=f"cat_{form_key_suffix}"
             )
-            
-        submitted = st.form_submit_button("CHẠY DỰ BÁO VÀ GÁN CHÍNH SÁCH CAN THIỆP", use_container_width=True)
 
-    if submitted or preset_chosen is not None:
+    with col_results:
         try:
             from model_helper import OlistCustomerPredictor
             predictor = OlistCustomerPredictor(model_dir=DEFAULT_MODEL_DIR)
@@ -585,61 +975,81 @@ if nav_choice == "DEMO TRỰC TIẾP: DỰ BÁO & CHỈ ĐỊNH":
                 product_category=in_category
             )
             
-            st.divider()
             st.markdown("### KẾT QUẢ DỰ BÁO AI VÀ GIẢI THÍCH TREESHAP")
             
-            # 4 Thẻ Chỉ số Kết quả
-            m_res1, m_res2, m_res3, m_res4 = st.columns(4)
-            m_res1.metric("Xác suất Giữ chân P(Retain)", res["prob_retain_pct"])
-            m_res2.metric("Tỷ lệ Rời bỏ P(Churn)", res["prob_churn_pct"])
-            m_res3.metric("Phân tầng Rủi ro", res["risk_tier"].split(":")[0], help=res["risk_tier"])
-            m_res4.metric("Luồng Thực thi", res["assigned_engine"].split("(")[0], help=res["assigned_engine"])
+            # 4 Thẻ Chỉ số Kết quả dạng lưới 2x2
+            m_top1, m_top2 = st.columns(2)
+            m_top1.metric("Xác suất Giữ chân P(Retain)", res["prob_retain_pct"])
+            m_top2.metric("Tỷ lệ Rời bỏ P(Churn)", res["prob_churn_pct"])
             
-            st.markdown("---")
+            m_bot1, m_bot2 = st.columns(2)
+            m_bot1.metric("Phân tầng Rủi ro", res["risk_tier"].split(":")[0], help=res["risk_tier"])
+            m_bot2.metric("Luồng Thực thi", res["assigned_engine"].split("(")[0], help=res["assigned_engine"])
             
-            # 2 Cột: Donut Chart SHAP (Trái) | Gói Hành động (Phải)
-            res_left, res_right = st.columns([1, 1])
+            st.divider()
             
-            with res_left:
-                st.markdown("#### Bóc Tách 4 Nhóm Động Lực (TreeSHAP XAI)")
-                df_pie = res["pie_chart_data"]
-                
-                if HAS_PLOTLY:
-                    fig_donut = px.pie(
-                        df_pie,
-                        names="Nhóm Nguyên Nhân",
-                        values="Tỷ trọng (%)",
-                        hole=0.55,
-                        color="Nhóm Nguyên Nhân",
-                        color_discrete_map={
-                            "Logistics & Vận chuyển": "#e63946",
-                            "Trải nghiệm Đánh giá": "#f4a261",
-                            "Tài chính & Trả góp": "#2a9d8f",
-                            "Ngành hàng & Vùng miền": "#457b9d"
-                        }
-                    )
-                    fig_donut.update_traces(textposition='inside', textinfo='percent+label')
-                    fig_donut.update_layout(margin=dict(t=10, b=10, l=10, r=10), height=320, showlegend=False)
-                    st.plotly_chart(fig_donut, use_container_width=True)
-                else:
-                    st.dataframe(df_pie, hide_index=True, use_container_width=True)
-                st.caption(f"**Yếu tố tác động lớn nhất:** {res['top_cause']}")
+            # Phần bóc tách TreeSHAP và Gói can thiệp
+            st.markdown("#### Bóc Tách 4 Nhóm Động Lực (TreeSHAP XAI)")
+            df_pie = res["pie_chart_data"]
+            
+            if HAS_PLOTLY:
+                fig_donut = px.pie(
+                    df_pie,
+                    names="Nhóm Nguyên Nhân",
+                    values="Tỷ trọng (%)",
+                    hole=0.55,
+                    color="Nhóm Nguyên Nhân",
+                    color_discrete_map={
+                        "Logistics & Vận chuyển": "#0284c7",
+                        "Trải nghiệm Đánh giá": "#f59e0b",
+                        "Tài chính & Trả góp": "#10b981",
+                        "Ngành hàng & Vùng miền": "#dc2626"
+                    }
+                )
+                fig_donut.update_traces(textposition='inside', textinfo='percent+label', textfont_size=16)
+                fig_donut.update_layout(margin=dict(t=10, b=10, l=10, r=10), height=320, showlegend=False)
+                st.plotly_chart(fig_donut, use_container_width=True)
+            else:
+                st.dataframe(df_pie, hide_index=True, use_container_width=True)
+            
+            st.markdown(f"""
+            <div class="demo-large-text" style="background:#f8fafc; padding:18px 22px; border-radius:10px; border-left:8px solid #dc2626; box-shadow:0 2px 8px rgba(0,0,0,0.06); margin-top:12px; margin-bottom:18px;">
+                <strong style="font-size:26px !important;">Yếu tố tác động lớn nhất:</strong><br>
+                <span style="color:#dc2626; font-weight:800; font-size:26px !important;">{res['top_cause']}</span>
+            </div>
+            """, unsafe_allow_html=True)
 
-            with res_right:
-                st.markdown("#### Gói Chính Sách Can Thiệp Chỉ Định")
-                st.success(f"### {res['action_title']}")
-                st.markdown(f"**Nội dung thực thi:**\n{res['action_desc']}")
-                st.info(f"**Kênh tiếp thị và Đối chuẩn:** {res['action_channel']}")
-                st.markdown(f"**Phân luồng Hệ thống:** `{res['assigned_engine']}`")
-                
+            st.markdown("<h4 style='font-size:28px !important; font-weight:800; color:#0f4c81; margin-top:16px; margin-bottom:10px;'>Gói Chính Sách Can Thiệp Chỉ Định</h4>", unsafe_allow_html=True)
+            st.markdown(f"""
+            <div class="demo-action-box">
+                <h3 style="font-size:28px !important; color:#047857; font-weight:800;">{res['action_title']}</h3>
+                <div class="demo-large-text">
+                    <p style="margin-bottom: 16px; font-size:26px !important;">
+                        <strong style="color:#0f172a; font-size:26px !important;">Nội dung thực thi:</strong><br>
+                        <span style="font-size:26px !important;">{res['action_desc']}</span>
+                    </p>
+                    <p style="margin-bottom: 16px; color:#0369a1; background:#e0f2fe; padding:14px 18px; border-radius:8px; font-size:26px !important;">
+                        <strong style="font-size:26px !important;">Kênh triển khai tiếp thị:</strong><br>
+                        <span style="font-size:26px !important;">{res['action_channel']}</span>
+                    </p>
+                    <p style="margin-bottom: 0px; color:#334155; font-size:26px !important;">
+                        <strong style="font-size:26px !important;">Phân luồng Hệ thống:</strong><br>
+                        <span style="font-size:26px !important; font-weight:bold; color:#0f172a; background:#e2e8f0; padding:6px 14px; border-radius:6px; display:inline-block; margin-top:6px;">
+                            {res['assigned_engine']}
+                        </span>
+                    </p>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+            
         except Exception as e:
             st.error(f"Có lỗi khi thực thi dự báo: {e}")
 
 # ===========================================================================
-# 2. PHÂN HỆ: 01. PHÂN TÍCH MÔ TẢ (EDA)
+# 2. PHÂN HỆ: 01. DESCRIPTIVE
 # ===========================================================================
-elif nav_choice == "01. Phân tích Mô tả (EDA)":
-    st.markdown("## 01. Phân Tích Mô Tả (Descriptive Analytics)")
+elif nav_choice == "01. Descriptive":
+    st.markdown("<div class='main-section-header' style='font-size: 50px !important; font-weight: 900 !important; color: #0f4c81 !important; margin-top: 20px !important; margin-bottom: 14px !important; line-height: 1.2 !important;'>01. Phân Tích Mô Tả (Descriptive Analytics)</div>", unsafe_allow_html=True)
     st.markdown(
         "Tổng hợp đặc trưng phân phối của **92,077 khách hàng** giao dịch thành công. "
         "Bố cục so le 2 cột nhấn mạnh trực tiếp vào bài học nghiệp vụ rút ra."
@@ -650,17 +1060,17 @@ elif nav_choice == "01. Phân tích Mô tả (EDA)":
             render_chart_group_alternating(k, config=CHARTS_CONFIG)
 
 # ===========================================================================
-# 3. PHÂN HỆ: 02. PHÂN TÍCH CHẨN ĐOÁN (DIAGNOSTIC)
+# 3. PHÂN HỆ: 02. DIAGNOSTIC
 # ===========================================================================
-elif nav_choice == "02. Phân tích Chẩn đoán (Diagnostic)":
-    st.markdown("## 02. Phân Tích Chẩn Đoán (Diagnostic Hypotheses)")
+elif nav_choice == "02. Diagnostic":
+    st.markdown("<div class='main-section-header' style='font-size: 50px !important; font-weight: 900 !important; color: #0f4c81 !important; margin-top: 20px !important; margin-bottom: 14px !important; line-height: 1.2 !important;'>02. Phân Tích Chẩn Đoán (Diagnostic Hypotheses)</div>", unsafe_allow_html=True)
     st.markdown(
         "Kiểm định thống kê chuyên sâu ($p$-value, Chi-Square, Mann-Whitney U) trên **6 yếu tố nghi vấn** "
         "gây rời bỏ khách hàng giữa nhóm Active (< 90 ngày) và nhóm Churn (≥ 90 ngày)."
     )
     
     # Bảng tóm tắt kết quả kiểm định (Kéo mở rộng từ bên dưới)
-    with st.expander("⇩ BẢNG TỔNG HỢP KẾT QUẢ KIỂM ĐỊNH 6 GIẢ THUYẾT ⇩", expanded=False):
+    with st.expander("BẢNG TỔNG HỢP KẾT QUẢ KIỂM ĐỊNH 6 GIẢ THUYẾT", expanded=False):
         st.markdown(r"""
         | STT | Giả thuyết Nghi vấn | Kết quả Thống kê | Mức Ý nghĩa ($p$-value) | Kết luận Nghiệp vụ |
         | :---: | :--- | :--- | :---: | :--- |
@@ -679,10 +1089,10 @@ elif nav_choice == "02. Phân tích Chẩn đoán (Diagnostic)":
             render_chart_group_alternating(k, config=DIAGNOSTIC_CONFIG)
 
 # ===========================================================================
-# 4. PHÂN HỆ: 03. ĐÁNH GIÁ MÔ HÌNH DỰ BÁO (PREDICTIVE EVALUATION)
+# 4. PHÂN HỆ: 03. PREDICTIVE
 # ===========================================================================
-elif nav_choice == "03. Đánh giá Mô hình Dự báo (Predictive)":
-    st.markdown("## 03. Đánh Giá Mô Hình Dự Báo (Predictive Modeling)")
+elif nav_choice == "03. Predictive":
+    st.markdown("<div class='main-section-header' style='font-size: 50px !important; font-weight: 900 !important; color: #0f4c81 !important; margin-top: 20px !important; margin-bottom: 14px !important; line-height: 1.2 !important;'>03. Đánh Giá Mô Hình Dự Báo (Predictive Modeling)</div>", unsafe_allow_html=True)
     st.markdown(
         "Tập trung đánh giá so sánh hiệu năng kỹ thuật giữa **Baseline (Logistic Regression)** và **Advanced (XGBoost Giai đoạn 2)**. "
         "Thiết kế 100% Zero-Leakage với Temporal Split và vùng đệm 78 ngày."
@@ -701,10 +1111,10 @@ elif nav_choice == "03. Đánh giá Mô hình Dự báo (Predictive)":
             render_chart_group_alternating(k, config=MODEL_CONFIG)
 
 # ===========================================================================
-# 5. PHÂN HỆ: 04. CHIẾN LƯỢC TỐI ƯU HÓA (PRESCRIPTIVE STRATEGY)
+# 5. PHÂN HỆ: 04. PRESCRIPTIVE
 # ===========================================================================
-elif nav_choice == "04. Chiến lược Tối ưu hóa (Prescriptive)":
-    st.markdown("## 04. Chiến Lược Chỉ Định và Tối Ưu Hóa Ngân Sách (Prescriptive Analytics)")
+elif nav_choice == "04. Prescriptive":
+    st.markdown("<div class='main-section-header' style='font-size: 50px !important; font-weight: 900 !important; color: #0f4c81 !important; margin-top: 20px !important; margin-bottom: 14px !important; line-height: 1.2 !important;'>04. Chiến Lược Chỉ Định và Tối Ưu Hóa Ngân Sách (Prescriptive Analytics)</div>", unsafe_allow_html=True)
     st.markdown(
         "Chuyển hóa dự báo AI thành hành động kinh doanh thực tế thông qua **Thuật toán Knapsack ILP** và **Cơ chế Phân luồng Kép (Dual-Engine)**. "
         "Bao gồm đầy đủ 6 bước phương pháp luận từ Báo cáo Phân tích Chỉ định."
@@ -732,24 +1142,24 @@ elif nav_choice == "04. Chiến lược Tối ưu hóa (Prescriptive)":
     with p_tab4:
         st.markdown("### Bước 6.2 & 6.3: Tổng Kết Hành Động Doanh Nghiệp và Bộ Giả Lập Tài Chính Kép")
         
-        st.markdown("#### 1. Tổng Quan Phân Định Chiến Lược (Phân luồng 2 Tầng)")
-        st.markdown(r"""
-        | Phân Luồng | Quy mô Khách | Vốn Cấp Trước | Doanh Số Kỳ Vọng | Lợi Nhuận Ròng | Tỷ suất ROI | Cơ Chế Thực Thi Quản Trị |
-        | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
-        | **Tier 2A (VIP - Cấp vốn)** | **600** ($4.44\%$) | **3,803.95 R$** | **14,729.80 R$** | **10,925.85 R$** | **287.22%** | Cấp vốn trực tiếp - Thu hồi vốn trong 14 ngày |
-        | **Tier 2B (Nền tảng - Tự tài trợ)** | **12,925** ($95.56\%$) | **0.00 R$** | **129,300.00 R$** | **28,446.00 R$** | $\infty$ | Tự tài trợ (Locked Cashback 14 ngày + Min-Cart $\ge$ 150%) |
-        | **TỔNG CỘNG HỢP NHẤT** | **13,525** ($100\%$) | **3,803.95 R$** | **144,029.80 R$** | **39,371.85 R$** | **10.3× Vốn** | **Lợi nhuận ròng gấp 10.3 lần vốn đầu tư ban đầu** |
-        """)
+        with st.expander("1. TỔNG QUAN PHÂN ĐỊNH CHIẾN LƯỢC (PHÂN LUỒNG 2 TẦNG)", expanded=False):
+            st.markdown(r"""
+            | Phân Luồng | Quy mô Khách | Vốn Cấp Trước | Doanh Số Kỳ Vọng | Lợi Nhuận Ròng | Tỷ suất ROI | Cơ Chế Thực Thi Quản Trị |
+            | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
+            | **Tier 2A (VIP - Cấp vốn)** | **600** ($4.44\%$) | **3,803.95 R$** | **14,729.80 R$** | **10,925.85 R$** | **287.22%** | Cấp vốn trực tiếp - Thu hồi vốn trong 14 ngày |
+            | **Tier 2B (Nền tảng - Tự tài trợ)** | **12,925** ($95.56\%$) | **0.00 R$** | **129,300.00 R$** | **28,446.00 R$** | $\infty$ | Tự tài trợ (Locked Cashback 14 ngày + Min-Cart $\ge$ 150%) |
+            | **TỔNG CỘNG HỢP NHẤT** | **13,525** ($100\%$) | **3,803.95 R$** | **144,029.80 R$** | **39,371.85 R$** | **10.3× Vốn** | **Lợi nhuận ròng gấp 10.3 lần vốn đầu tư ban đầu** |
+            """)
         
-        st.markdown("#### 2. Ma Trận Can Thiệp 4 Cụm Điểm Nghẽn & Chuẩn Đối Sánh")
-        st.markdown(r"""
-        | Cụm Điểm Nghẽn | Vấn Đề Cốt Lõi | Luồng Tier 2A (VIP - Cấp Vốn) | Luồng Tier 2B (Nền Tảng - Tự Tài Trợ) | Nền Tảng Đối Chuẩn |
-        | :--- | :--- | :--- | :--- | :--- |
-        | **Cụm 0: Áp Lực Tài Chính** (2.319 khách) | Đơn to (AOV 140 R$), trả góp dài | Tài trợ Trả góp 0% (Chi phí 6% AOV ~ 8.46 R$/khách) | Ví hoàn tiền tạm khóa (Locked Cashback 14 ngày) + Min-Cart $\ge$ 150% đơn cũ | Mercado Libre Brazil (Mercado Pago 0% Installment) |
-        | **Cụm 1: Đánh Giá Kém** (2.086 khách) | Review 2/5 sao, khiếu nại CSKH | Đội CSKH VIP gọi điện trong 24h + Voucher đền bù 12% AOV (~12.01 R$) | Thông báo xin lỗi từ Ban Giám đốc + Mã hoàn tiền 5% đơn kế tiếp | Amazon CSKH & Chính sách Đổi trả A-to-z Guarantee |
-        | **Cụm 2: Khủng Hoảng Giao Hàng** (442 khách) | Giao trễ 5.4 ngày, hụt SLA | Hoàn 100% cước phí giao hàng (Free Ship SLA 16.49 R$/khách) | Mã hỗ trợ 50% cước phí vận chuyển cho đơn hàng tiếp theo | Amazon Prime SLA & JD.com (Logistics On-time Guarantee) |
-        | **Cụm 3: Rời Bỏ Ngành Hàng** (8.678 khách) | Đơn nhỏ (AOV 78 R$), mua 1 lần | Tự tài trợ $0$ R$ (Gộp chung luồng tự động) | Vòng lặp mua lại 1-Click Refill (30 ngày) + Hộ chiếu Hội viên Loyalty Passport | Shopee (Vòng quay xu/Deal chớp nhoáng) & Taobao Pass |
-        """)
+        with st.expander("2. MA TRẬN CAN THIỆP 4 CỤM ĐIỂM NGHẼN & CHUẨN ĐỐI SÁNH", expanded=False):
+            st.markdown(r"""
+            | Cụm Điểm Nghẽn | Vấn Đề Cốt Lõi | Luồng Tier 2A (VIP - Cấp Vốn) | Luồng Tier 2B (Nền Tảng - Tự Tài Trợ) | Nền Tảng Đối Chuẩn |
+            | :--- | :--- | :--- | :--- | :--- |
+            | **Cụm 0: Áp Lực Tài Chính** (2.319 khách) | Đơn to (AOV 140 R$), trả góp dài | Tài trợ Trả góp 0% (Chi phí 6% AOV ~ 8.46 R$/khách) | Ví hoàn tiền tạm khóa (Locked Cashback 14 ngày) + Min-Cart $\ge$ 150% đơn cũ | Mercado Libre Brazil (Mercado Pago 0% Installment) |
+            | **Cụm 1: Đánh Giá Kém** (2.086 khách) | Review 2/5 sao, khiếu nại CSKH | Đội CSKH VIP gọi điện trong 24h + Voucher đền bù 12% AOV (~12.01 R$) | Thông báo xin lỗi từ Ban Giám đốc + Mã hoàn tiền 5% đơn kế tiếp | Amazon CSKH & Chính sách Đổi trả A-to-z Guarantee |
+            | **Cụm 2: Khủng Hoảng Giao Hàng** (442 khách) | Giao trễ 5.4 ngày, hụt SLA | Hoàn 100% cước phí giao hàng (Free Ship SLA 16.49 R$/khách) | Mã hỗ trợ 50% cước phí vận chuyển cho đơn hàng tiếp theo | Amazon Prime SLA & JD.com (Logistics On-time Guarantee) |
+            | **Cụm 3: Rời Bỏ Ngành Hàng** (8.678 khách) | Đơn nhỏ (AOV 78 R$), mua 1 lần | Tự tài trợ $0$ R$ (Gộp chung luồng tự động) | Vòng lặp mua lại 1-Click Refill (30 ngày) + Hộ chiếu Hội viên Loyalty Passport | Shopee (Vòng quay xu/Deal chớp nhoáng) & Taobao Pass |
+            """)
         
         st.divider()
         st.markdown("#### 3. Bộ Giả Lập Tài Chính Kép Tương Tác (Dual-Engine ROI Simulator)")
