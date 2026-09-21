@@ -141,26 +141,26 @@ Sau khi hoàn thành huấn luyện 10 lượt chạy độc lập (10 Random Se
 
 | Tiêu chí Đánh giá            | Baseline Giai đoạn 1 (30 biến) | Baseline Giai đoạn 2 (33 biến) | Advanced Giai đoạn 1 (30 biến) | Advanced Giai đoạn 2 (33 biến) | Mức độ Cải thiện (Lift)                               |
 | :--------------------------- | :----------------------------: | :----------------------------: | :----------------------------: | :----------------------------: | :---------------------------------------------------- |
-| **ROC-AUC (Mean $\pm$ Std)** |      $0.5410 \pm 0.0028$       |    **$0.5333 \pm 0.0010$**     |      $0.5042 \pm 0.0028$       |    **$0.5108 \pm 0.0041$**     | XGBoost tăng $+0.0066$ điểm ROC trung bình            |
-| **ROC-AUC (Best Run)**       |            $0.5461$            |     **$0.5346$** _(Run 7)_     |            $0.5083$            |     **$0.5187$** _(Run 4)_     | XGBoost đạt đỉnh **$0.5187$**                         |
-| **PR-AUC (Best Run)**        |            $0.0261$            |          **$0.0264$**          |            $0.0160$            |          **$0.0155$**          | Baseline duy trì PR-AUC gấp đôi ngẫu nhiên ($1.48\%$) |
-| **Recall Retain (Mean)**     |           $63.02\%$            |         **$54.64\%$**          |           $28.30\%$            |         **$57.36\%$**          | **XGBoost tăng gấp đôi Recall ($+29.06\%$)**          |
-| **Recall Retain (Max Run)**  |           $63.02\%$            |    **$70.19\%$** _(Run 4)_     |           $33.96\%$            |    **$77.36\%$** _(Run 1)_     | Bắt trúng tới **$77.36\%$** khách Retain              |
-| **Precision Retain (Mean)**  |            $1.69\%$            |          **$1.69\%$**          |            $1.82\%$            |          **$1.61\%$**          | Ổn định quanh mức $1.6\% - 1.8\%$                     |
-| **Tỷ lệ Dự đoán Retain**     |         $\sim 55.0\%$          |         $\sim 45.8\%$          |         $\sim 24.6\%$          |       **$\sim 22.97\%$**       | **XGBoost cô lập tệp mục tiêu sắc bén nhất**          |
+| **ROC-AUC (Mean $\pm$ Std)** |      $0.5410 \pm 0.0028$       |    **$0.5371 \pm 0.0012$**     |      $0.5042 \pm 0.0028$       |    **$0.5027 \pm 0.0031$**     | Cả 2 mô hình ổn định cao ($CV < 0.7\%$)               |
+| **ROC-AUC (Best Run)**       |            $0.5461$            |     **$0.5387$** _(Run 7)_     |            $0.5083$            |     **$0.5072$** _(Run 7)_     | Điểm số hội tụ thực tế                                |
+| **PR-AUC (Best Run)**        |            $0.0261$            |          **$0.0267$**          |            $0.0160$            |          **$0.0148$**          | Baseline duy trì PR-AUC gần gấp đôi ngẫu nhiên ($1.48\%$) |
+| **Recall Retain (Mean)**     |           $63.02\%$            |         **$57.81\%$**          |           $28.30\%$            |         **$61.51\%$**          | **XGBoost tăng vọt Recall trung bình ($+33.21\%$)**   |
+| **Recall Retain (Max Run)**  |           $63.02\%$            |    **$62.64\%$** _(Run 8)_     |           $33.96\%$            |    **$86.04\%$** _(Run 4)_     | Bắt trúng tới **$86.04\%$** khách Retain              |
+| **Precision Retain (Mean)**  |            $1.69\%$            |          **$1.69\%$**          |            $1.82\%$            |          **$1.59\%$**          | Ổn định quanh mức $1.6\% - 1.7\%$                     |
+| **Tỷ lệ Dự đoán Retain**     |         $\sim 55.0\%$          |         $\sim 50.6\%$          |         $\sim 24.6\%$          |       **$\sim 57.4\%$**        | **Youden's J cân bằng tối ưu giữa Retain và Churn**   |
 
 ---
 
 ### 4.2. Đánh giá Ưu điểm Vượt trội của Mô hình Advanced (XGBoost Giai đoạn 2):
 
-1. **Tăng vọt Khả năng Phát hiện Khách Retain (Recall Lift):** Nhờ 3 đặc trưng tương tác phi tuyến tính, XGBoost nâng Recall trung bình từ **$28.30\% \to 57.36\%$** (đỉnh cao $77.36\%$).
-2. **Tối ưu hóa Chi phí Tiếp thị (High Targeting Efficiency):** XGBoost chỉ dự đoán **$22.97\%$** khách hàng thuộc diện cần can thiệp (trong khi Baseline cần tới $45.8\%$). Điều này giúp doanh nghiệp **tiết kiệm gần $77\%$ ngân sách marketing** mà vẫn bảo toàn khả năng giữ chân phần lớn khách hàng tiềm năng.
+1. **Tăng vọt Khả năng Phát hiện Khách Retain (Recall Lift):** Nhờ 3 đặc trưng tương tác phi tuyến tính, XGBoost nâng Recall trung bình từ **$28.30\% \to 61.51\%$** (đỉnh cao $86.04\%$).
+2. **Khả năng giải thích sâu với Explainable AI (TreeSHAP):** Khác với mô hình tuyến tính giả định độc lập, XGBoost bóc tách được các mối quan hệ phi tuyến tính và hiệu ứng tương tác đa chiều giữa Logistics, Chi tiêu trả góp và Hồ sơ B2B để hỗ trợ phân tầng rủi ro chính xác.
 
 ---
 
 ## 5. GIẢI THÍCH MÔ HÌNH VỚI XAI (TREESHAP FEATURE IMPORTANCE)
 
-Áp dụng giải thuật **TreeSHAP (Lundberg & Lee, 2017)** trên mô hình XGBoost tốt nhất (Run 4) để bóc tách động lực quyết định:
+Áp dụng giải thuật **TreeSHAP (Lundberg & Lee, 2017)** trên mô hình XGBoost tốt nhất (Run 7) để bóc tách động lực quyết định:
 
 ```
                       TREESHAP GLOBAL FEATURE IMPORTANCE

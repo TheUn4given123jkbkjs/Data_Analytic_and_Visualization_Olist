@@ -2,5 +2,5 @@
   "C": 1.0,
   "class_weight": "balanced",
   "penalty": "l2",
-  "solver": "lbfgs"
+  "solver": "liblinear"
 }

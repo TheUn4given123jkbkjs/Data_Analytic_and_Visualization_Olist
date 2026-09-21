@@ -1,13 +1,13 @@
 {
   "run_id": 7,
   "seed": 91,
-  "roc_auc": 0.5346387781991988,
-  "pr_auc": 0.026353521952180103,
-  "recall_retain": 0.5245283018867924,
-  "recall_churn": 0.542832909245123,
-  "precision_retain": 0.016901750972762645,
-  "f1_retain": 0.03274826245729768,
-  "pred_retain_rate": 0.4581615598885794,
-  "youden_threshold": 0.5011389042949076,
-  "best_params": "{'C': 1.0, 'class_weight': 'balanced', 'penalty': 'l2', 'solver': 'lbfgs'}"
+  "roc_auc": 0.5386925280458336,
+  "pr_auc": 0.02668434228743371,
+  "recall_retain": 0.569811320754717,
+  "recall_churn": 0.5137121854679106,
+  "precision_retain": 0.017255170837618558,
+  "f1_retain": 0.03349600709849157,
+  "pred_retain_rate": 0.4875208913649025,
+  "youden_threshold": 0.49357729220573515,
+  "best_params": "{'C': 1.0, 'class_weight': 'balanced', 'penalty': 'l2', 'solver': 'liblinear'}"
 }

@@ -9,7 +9,7 @@ Theo quy chuẩn kỹ thuật dữ liệu học thuật và thực tiễn doanh 
 * **Cam kết kỹ thuật:**
   1. Tuyệt đối **KHÔNG BAO GIỜ** sửa đổi, ghi đè hay xóa trực tiếp trên các tệp dữ liệu gốc.
   2. Mọi thao tác làm sạch được thực hiện trên bản sao bộ nhớ RAM (`df.copy()`).
-  3. Kết quả làm sạch được xuất ra thư mục riêng (`fix/data/cleaned/clean_*.csv`) để phục vụ các bước phân tích tiếp theo mà không làm ảnh hưởng đến dữ liệu nguồn.
+  3. Kết quả làm sạch được xuất ra thư mục riêng (`00_Data_Preparation/cleaned/clean_*.csv`) để phục vụ các bước phân tích tiếp theo mà không làm ảnh hưởng đến dữ liệu nguồn.
 
 ---
 
