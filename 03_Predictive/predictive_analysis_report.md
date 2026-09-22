@@ -184,13 +184,16 @@ Sau khi hoàn thành huấn luyện 10 lượt chạy độc lập (10 Random Se
 
 ## 6. PHÂN TẦNG RỦI RO KHÁCH HÀNG (RISK TIER SEGMENTATION)
 
-Áp dụng mô hình XGBoost (Run 4) lên toàn bộ $17,950$ khách hàng trong tập Test để phân tầng phục vụ trực tiếp cho **Module 4 (Prescriptive Analytics)**:
+Áp dụng mô hình XGBoost (Run 7 — seed = 91, Youden threshold = 0.1492) lên toàn bộ $17,950$ khách hàng trong tập Test để phân tầng phục vụ trực tiếp cho **Module 4 (Prescriptive Analytics)**:
 
 | Tầng Rủi ro (Risk Tier) | Ngưỡng Xác suất $P(\text{Retain})$ | Tỷ trọng Khách hàng | Số lượng Khách | Định hướng Can thiệp Nghiệp vụ |
 | :--- | :---: | :---: | :---: | :--- |
-| **Tier 1: Irretrievable / Dead Loss** | $P < 0.189$ | **$18.56\%$** | $3,331$ | **KHÔNG CHI TIỀN MARKETING.** Khách hàng có rủi ro rời bỏ tuyệt đối, trải nghiệm thất bại nặng nề hoặc nhu cầu vãng lai 1 lần. Chi tiền vào đây sẽ gây thất thoát $100\%$ ngân sách (Deadweight Loss). |
-| **Tier 2: Savable Target (Mục tiêu)** | $0.189 \le P \le 0.280$ | **$58.11\%$** | **$10,430$** | **TẬP TRUNG NGUỒN LỰC CAN THIỆP.** Nhóm nhạy cảm cao với dịch vụ, dễ bị lung lay bởi điểm nghẽn trải nghiệm (trễ hẹn, áp lực trả góp, ngành hàng ngoại vi). Áp dụng phân luồng 2 tầng (Tier 2A cấp vốn & Tier 2B tự tài trợ). |
-| **Tier 3: Organic Safe (Tự nhiên)** | $P > 0.280$ | **$23.34\%$** | **$4,189$** | **BẢO TOÀN BIÊN LỢI NHUẬN.** Khách hàng có xu hướng quay lại tự nhiên rất cao (xác suất $> 28.0\%$, cao gấp $> 9.4$ lần tỷ lệ tự nhiên toàn sàn $2.98\%$). Không chiết khấu/voucher dư thừa, chỉ duy trì dịch vụ chuẩn và chương trình CRM tích điểm. |
+| **Tier 1 — Nguy cơ Cực cao (Lost Risk)** | $P < 0.150$ | **$49.24\%$** | **$8,839$** | **KHÔNG CHI TIỀN MARKETING.** Khách hàng có xác suất giữ chân cực thấp (dưới $15\%$), trải nghiệm thất bại nặng nề hoặc nhu cầu vãng lai 1 lần. Chi tiền vào đây sẽ gây thất thoát $100\%$ ngân sách (Deadweight Loss). |
+| **Tier 2 — Cửa sổ Vàng Cứu được (Savable Target)** | $0.150 \le P \le 0.341$ | **$50.71\%$** | **$9,102$** | **TẬP TRUNG NGUỒN LỰC CAN THIỆP.** Nhóm nhạy cảm cao với dịch vụ, dễ bị lung lay bởi điểm nghẽn trải nghiệm (trễ hẹn, áp lực trả góp, ngành hàng ngoại vi). Áp dụng phân luồng Tier 2A (VIP Engine cấp vốn) và Tier 2B (Base Engine tự tài trợ). |
+| **Tier 3 — Nguy cơ Trung bình (Monitor)** | $P > 0.341$ | **$0.05\%$** | **$9$** | **THEO DÕI VÀ BẢO TOÀN.** Nhóm cực nhỏ có xác suất giữ chân cao nhất ($P \in [0.352, 0.437]$), cao gấp $>14$ lần tỷ lệ tự nhiên toàn sàn ($2.98\%$). Duy trì dịch vụ chuẩn và CRM tích điểm, không chiết khấu dư thừa. |
+
+> [!NOTE]
+> **Lưu ý Phân bố:** Với ngưỡng Youden = $0.1492$ từ Run 7, gần như toàn bộ tập test được phân vào 2 tầng chính (Tier 1: $49.24\%$ và Tier 2: $50.71\%$). Tier 3 chỉ gồm **9 khách hàng** ($0.05\%$) có xác suất vượt $0.35$, phản ánh đúng thực trạng thị trường: xác suất giữ chân tự nhiên của Olist Brazil rất thấp ($2.98\%$) và mô hình không tạo ra nhiều dự báo lạc quan. Chính **Tier 2 (9,102 khách)** mới là nhóm mục tiêu chính được chuyển sang Module 04 để tối ưu hóa ngân sách can thiệp.
 
 ---
 
@@ -210,11 +213,11 @@ Sau khi hoàn thành huấn luyện 10 lượt chạy độc lập (10 Random Se
    - *Tier 1:* Loại trừ khỏi chiến dịch tiếp thị để triệt tiêu lãng phí ngân sách.
    - *Tier 2:* Trích xuất đưa vào bài toán tối ưu hóa phân bổ ngân sách và can thiệp 4 cụm điểm nghẽn.
    - *Tier 3:* Phân luồng chăm sóc tự nhiên, bảo vệ 100% biên lợi nhuận gộp.
-2. **Thực hiện Phân cụm Nguyên nhân Gốc rễ bằng TreeSHAP (Root Cause Clustering):**
-   - *Cụm 0 (Financial Relief):* Khách hàng vướng rào cản tài chính, áp lực trả góp lớn -> Kích hoạt Gói Trả góp 0% Lãi suất.
-   - *Cụm 1 (Service Resolution):* Đánh giá 1-2 sao, sự cố dịch vụ -> Đội ngũ CSKH xử lý khiếu nại + Voucher thiện chí 12%.
-   - *Cụm 2 (Experience Recovery):* Sốc giao hàng trễ -> Gói bồi thường 100% cước vận chuyển (Free Ship).
-   - *Cụm 3 (Category Re-engagement):* Mua sắm ngành hàng/khu vực ngoại vi -> Gợi ý sản phẩm bổ trợ cá nhân hóa + Voucher kích cầu 8%.
+2. **Thực hiện Phân cụm Nguyên nhân Gốc rễ bằng TreeSHAP & K-Means (Root Cause Clustering):**
+   - *Cụm 0 (Category Re-engagement — 68.08%):* Mua sắm ngành hàng/khu vực ngoại vi -> Gợi ý sản phẩm bổ trợ cá nhân hóa + Voucher kích cầu 8%.
+   - *Cụm 1 (Financial Relief — 17.25%):* Rào cản tài chính, áp lực trả góp lớn -> Tài trợ chương trình Trả góp 0% Lãi suất (6% AOV).
+   - *Cụm 2 (Service Resolution — 12.29%):* Đánh giá 1-2 sao, sự cố dịch vụ -> Đội ngũ CSKH xử lý khiếu nại + Voucher thiện chí 12%.
+   - *Cụm 3 (Experience Recovery — 2.37%):* Sốc giao hàng trễ nghiêm trọng -> Gói bảo hiểm SLA hoàn 100% cước vận chuyển (Free Ship).
 3. **Thiết lập Động cơ Kép (Dual-Engine Framework) & Tối ưu hóa Tuyến tính (ILP):**
    - *Nhánh Tier 2A (VIP Engine):* Cấp vốn tức thì cho top khách hàng biên lợi nhuận cao nhất, hoàn vốn trong 14 ngày.
    - *Nhánh Tier 2B (Base Engine):* Tự động hóa tự tài trợ qua mã giảm giá kèm điều kiện giỏ hàng mới.
