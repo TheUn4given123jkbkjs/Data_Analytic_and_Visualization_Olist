@@ -7,7 +7,7 @@ Tài liệu API và hướng dẫn chi tiết các module hỗ trợ tích hợp
 ## 1. Cài đặt Thư viện Phụ thuộc
 Chạy lệnh sau tại terminal để cài đặt toàn bộ môi trường:
 ```bash
-pip install -r requirements.txt
+pip install -r requirement.txt
 ```
 
 ---
