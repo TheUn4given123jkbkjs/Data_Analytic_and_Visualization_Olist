@@ -95,11 +95,12 @@ Trích xuất **33 đặc trưng ứng viên** độc lập từ Đơn hàng đ�
 
 ---
 
-### 2.4. Phân tích Giới hạn: "Điểm nghẽn Thông tin (Information Bottleneck)"
+### 2.4. Phân tích Giới hạn: "Điểm nghẽn Thông tin (Information Bottleneck) & Bài toán Cold-Start"
 
-1. **Tỷ số Tín hiệu trên Nhiễu (SNR) tiệm cận 0:** Thông tin tương hỗ $I(X; Y)$ giữa một đơn hàng giao dịch đơn lẻ và hành vi mua lại sau 90 ngày rất nhỏ ($I(X; Y) < 0.003\text{ nats}$).
-2. **Đặc thù Ngành hàng Lâu bền (Durable Goods):** Khách mua đồ nội thất (giường, tủ, bàn ghế) dù hài lòng 5 sao vẫn không có nhu cầu sinh học để mua tiếp trong 90 ngày.
-3. **Cần Nâng cấp Đặc trưng Tương tác:** Các biến số đơn lẻ chưa đủ sức nhận diện khách sỉ B2B, áp lực trả nợ hàng tháng hay tỷ lệ giao hàng sớm vượt kỳ vọng.
+1. **Bản chất Bài toán Khởi đầu Lạnh (Cold-Start):** Hơn **$97\%$** khách hàng Olist chỉ xuất hiện với đúng 1 đơn hàng giao dịch tĩnh. Doanh nghiệp hoàn toàn không có dữ liệu hành vi dài hạn (clickstream, phiên truy cập ứng dụng, tần suất duyệt sản phẩm) trước thời điểm $T_0$.
+2. **Tỷ số Tín hiệu trên Nhiễu (SNR) tiệm cận 0:** Thông tin tương hỗ $I(X; Y)$ giữa một đơn hàng giao dịch đơn lẻ và hành vi mua lại sau 90 ngày rất nhỏ ($I(X; Y) < 0.003\text{ nats}$). Mức AUC quanh $0.51 - 0.54$ phản ánh **giới hạn trần thông tin khách quan của dữ liệu (Data-intrinsic limit)**, chứ không phải do thiếu sót trong kiến trúc mô hình.
+3. **Đặc thù Ngành hàng Lâu bền (Durable Goods):** Khách mua đồ nội thất (giường, tủ, bàn ghế) dù hài lòng 5 sao vẫn không có nhu cầu sinh học để mua tiếp trong 90 ngày.
+4. **Cần Nâng cấp Đặc trưng Tương tác:** Các biến số đơn lẻ chưa đủ sức nhận diện khách sỉ B2B, áp lực trả nợ hàng tháng hay tỷ lệ giao hàng sớm vượt kỳ vọng.
 
 ---
 
@@ -144,17 +145,33 @@ Sau khi hoàn thành huấn luyện 10 lượt chạy độc lập (10 Random Se
 | **ROC-AUC (Mean $\pm$ Std)** |      $0.5410 \pm 0.0028$       |    **$0.5371 \pm 0.0012$**     |      $0.5042 \pm 0.0028$       |    **$0.5027 \pm 0.0031$**     | Cả 2 mô hình ổn định cao ($CV < 0.7\%$)               |
 | **ROC-AUC (Best Run)**       |            $0.5461$            |     **$0.5387$** _(Run 7)_     |            $0.5083$            |     **$0.5072$** _(Run 7)_     | Điểm số hội tụ thực tế                                |
 | **PR-AUC (Best Run)**        |            $0.0261$            |          **$0.0267$**          |            $0.0160$            |          **$0.0148$**          | Baseline duy trì PR-AUC gần gấp đôi ngẫu nhiên ($1.48\%$) |
-| **Recall Retain (Mean)**     |           $63.02\%$            |         **$57.81\%$**          |           $28.30\%$            |         **$61.51\%$**          | **XGBoost tăng vọt Recall trung bình ($+33.21\%$)**   |
-| **Recall Retain (Max Run)**  |           $63.02\%$            |    **$62.64\%$** _(Run 8)_     |           $33.96\%$            |    **$86.04\%$** _(Run 4)_     | Bắt trúng tới **$86.04\%$** khách Retain              |
+| **Recall Retain (Mean)**     |           $63.02\%$            |         **$57.81\%$**          |           $28.30\%$            |         **$61.51\%$**          | **XGBoost nâng Recall nhờ diện bao phủ $57.4\%$ (Trade-off)** |
+| **Recall Retain (Max Run)**  |           $63.02\%$            |    **$62.64\%$** _(Run 8)_     |           $33.96\%$            |    **$86.04\%$** _(Run 4)_     | Bắt trúng tới **$86.04\%$** khách Retain (đánh đổi Precision) |
 | **Precision Retain (Mean)**  |            $1.69\%$            |          **$1.69\%$**          |            $1.82\%$            |          **$1.59\%$**          | Ổn định quanh mức $1.6\% - 1.7\%$                     |
 | **Tỷ lệ Dự đoán Retain**     |         $\sim 55.0\%$          |         $\sim 50.6\%$          |         $\sim 24.6\%$          |       **$\sim 57.4\%$**        | **Youden's J cân bằng tối ưu giữa Retain và Churn**   |
 
 ---
 
-### 4.2. Đánh giá Ưu điểm Vượt trội của Mô hình Advanced (XGBoost Giai đoạn 2):
+### 4.2. Đánh giá Khách quan & Phân tích Nghịch lý Kỹ thuật (Occam's Razor & Probability Miscalibration)
 
-1. **Tăng vọt Khả năng Phát hiện Khách Retain (Recall Lift):** Nhờ 3 đặc trưng tương tác phi tuyến tính, XGBoost nâng Recall trung bình từ **$28.30\% \to 61.51\%$** (đỉnh cao $86.04\%$).
-2. **Khả năng giải thích sâu với Explainable AI (TreeSHAP):** Khác với mô hình tuyến tính giả định độc lập, XGBoost bóc tách được các mối quan hệ phi tuyến tính và hiệu ứng tương tác đa chiều giữa Logistics, Chi tiêu trả góp và Hồ sơ B2B để hỗ trợ phân tầng rủi ro chính xác.
+Bảng đối chuẩn thực nghiệm và biểu đồ Cumulative Gains cho thấy một hiện tượng khoa học dữ liệu đặc biệt, cần được nhìn nhận trung thực và chặt chẽ:
+
+1. **Nghịch lý Baseline thắng XGBoost về Xếp hạng Xác suất (Cumulative Gains):**
+   - **Baseline (Logistic Regression):** Duy trì ROC-AUC ổn định ($0.5371$), PR-AUC ($0.0267$ — gần gấp đôi mức ngẫu nhiên $1.48\%$), và nằm hoàn toàn **trên đường cơ sở ngẫu nhiên** trên biểu đồ Cumulative Gains.
+   - **XGBoost (Advanced):** Dù có kiến trúc cây phi tuyến tính, ROC-AUC chỉ đạt $0.5027$ và PR-AUC là $0.0148$ (bằng đúng xác suất bốc thăm ngẫu nhiên). Trên biểu đồ Cumulative Gains, đường cong của XGBoost bị **trũng xuống dưới đường cơ sở** ở các phân vị đầu dòng $\rightarrow$ Thể hiện hiện tượng **đảo lộn thứ tự xếp hạng (Rank Inversion)**.
+
+2. **Căn nguyên Kỹ thuật: Mất Định chuẩn Xác suất trong Môi trường Tín hiệu Mỏng (Low-SNR):**
+   - **Nguyên lý Dao cạo Occam (Occam's Razor):** Trong bối cảnh bài toán *Khởi đầu lạnh (Cold-Start)* với chỉ 1 đơn hàng giao dịch tĩnh duy nhất ($I(X; Y) \approx 0$), cấu trúc phân nhánh phức tạp của Gradient Boosting Trees rất dễ bị **overfitting vào nhiễu cục bộ**. Hậu quả là hàm xác suất đầu ra bị **lệch chuẩn nghiêm trọng (Probability Miscalibration)**.
+   - Ngược lại, giả định tuyến tính chặt chẽ của Logistic Regression đóng vai trò như một **bộ điều hòa tự nhiên (Smooth Regularizer)**, giúp ước lượng xác suất tổng quát hóa tốt hơn và không bị bẫy nhiễu.
+
+3. **Bản chất Khoa học của Mức Recall $61.51\%$ (Cái bẫy Đánh đổi Ngưỡng Youden's J):**
+   - Sự gia tăng Recall của XGBoost từ $28.30\%$ lên $61.51\%$ (Run 4 đạt $86.04\%$) **không đồng nghĩa** với việc mô hình có năng lực phân loại xác suất sắc bén hơn. 
+   - Thực chất, thuật toán tối ưu Youden's J đã tự động hạ thấp ngưỡng quyết định xuống mức $0.1492$, khiến mô hình dự đoán tới **$57.4\%$ toàn bộ tệp khách hàng là tích cực (Retain)**. 
+   - Về mặt xác suất, việc mở rộng diện bao phủ lên $57.4\%$ tệp khách hàng đương nhiên sẽ bắt trúng $\sim 60\%$ khách hàng Retain thực tế. Đây là **sự đánh đổi có chủ đích (Strategic Trade-off)** trong nghiệp vụ: Chấp nhận độ pha loãng Precision ($1.59\%$) để tối đa hóa khả năng "vớt vát" khách hàng và chuẩn bị tệp mục tiêu (Tier 2: $9,102$ khách) cho bước tối ưu hóa kinh tế tiếp theo.
+
+4. **Lý do Lựa chọn XGBoost làm Nền tảng Chuyển giao sang Module 04:**
+   - **Không sử dụng XGBoost để lấy điểm xác suất ngoại suy tuyệt đối:** Đối với việc xếp hạng quy mô kinh tế đơn thuần, Logistic Regression là lựa chọn an toàn hơn.
+   - **Sử dụng XGBoost làm Cỗ máy Bóc tách Tương tác Phi tuyến (TreeSHAP Engine):** Logistic Regression chỉ ghi nhận tác động cộng tính tuyến tính độc lập. Chỉ có cấu trúc chia nhánh của XGBoost mới bắt được các **hiệu ứng tương tác kết hợp (Interaction Effects)** có thật trong thực tế vận hành (ví dụ: `giao hàng trễ` $\times$ `áp lực trả góp lớn` $\times$ `đánh giá 1 sao`). Ma trận TreeSHAP trích xuất từ XGBoost chính là nguyên liệu đầu vào định tính không thể thay thế để phân cụm 4 nhóm lực cản (Friction Profiles) trong Module 04.
 
 ---
 
@@ -202,7 +219,7 @@ Sau khi hoàn thành huấn luyện 10 lượt chạy độc lập (10 Random Se
 ### 7.1. Tổng kết Thành tựu Module 03 (Predictive Analytics)
 
 1. **Khoa học & Không Rò rỉ Dữ liệu ($100\%$ Zero Leakage):** Bác bỏ hoàn toàn các mô hình gian lận tương lai, xây dựng hệ thống dự báo thực tế ngay sau Đơn hàng đầu tiên.
-2. **Kế thừa Phương pháp luận Quốc tế:** Bổ sung thành công 3 đặc trưng tương tác hành vi giúp XGBoost tăng gấp đôi Recall ($57.36\%$).
+2. **Thấu hiểu Bản chất Dữ liệu & Khai phóng Explainable AI:** Xác định rõ giới hạn trần thông tin (Information Bottleneck) của bài toán Cold-Start; tận dụng tối đa cấu trúc phân nhánh của XGBoost thông qua TreeSHAP để bóc tách 4 chiều lực cản khách hàng mà mô hình tuyến tính không thể nhận diện.
 3. **Chuẩn bị Sẵn sàng Tệp Khách hàng Mục tiêu:** Xuất file `test_predictions.csv` chứa đầy đủ xác suất $P(\text{Retain})$, nhãn phân tầng và SHAP Values.
 
 ---
